@@ -39,7 +39,8 @@ module tb_memory;
     // Instantiate Instruction Memory initialized with array_sum.hex
     instruction_memory #(
         .MEM_DEPTH     (256),
-        .MEM_INIT_FILE ("programs/array_sum.hex")
+        .MEM_INIT_FILE ("programs/array_sum.hex"),
+        .MEM_INIT_WORDS(13)
     ) uut_imem (
         .addr            (imem_addr),
         .instruction     (imem_data),
@@ -50,7 +51,8 @@ module tb_memory;
     // Instantiate Data Memory initialized with array_sum_data.hex
     data_memory #(
         .MEM_DEPTH     (256),
-        .MEM_INIT_FILE ("programs/array_sum_data.hex")
+        .MEM_INIT_FILE ("programs/array_sum_data.hex"),
+        .MEM_INIT_WORDS(6)
     ) uut_dmem (
         .clk             (clk),
         .mem_read        (dmem_read),

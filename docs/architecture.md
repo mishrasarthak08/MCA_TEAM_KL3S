@@ -110,12 +110,21 @@ The implementation separates datapath and control into distinct, synthesizable V
 12. **`mips_system` (`rtl/mips_system.v`):**
     - Complete Harvard system integrating core with memories and debug visibility taps.
 
+13. **`shared_memory_arbiter` (`rtl/shared_memory_arbiter.v`):**
+    - Single-port, data-priority comparison reference.
+    - Grants at most one instruction/data request per service slot.
+    - Used by `tb_memory_hierarchy.v`; it is not connected to the Harvard processor.
+
 ---
 
-## 4. Single-Cycle Timing and Critical Path
+## 4. Single-Cycle Timing Scope
 
 In single-cycle execution, the entire datapath must settle before the rising clock edge:
 
 $$\text{Critical Path (Load Word): } T_{clk} \ge T_{PC\_clk\_to\_q} + T_{IMEM\_read} + T_{RF\_read} + T_{ALU} + T_{DMEM\_read} + T_{WB\_mux} + T_{RF\_setup}$$
 
-This critical path dictates the maximum operating frequency ($f_{max} \approx 25\text{--}40\text{ MHz}$ on typical FPGAs). Since each instruction completes in 1 cycle, the CPI (Cycles Per Instruction) is always exactly 1.00.
+This expression identifies the load path that would constrain a physical implementation. The repository does not include technology mapping, placement, routing, or static timing analysis, so it does not claim a maximum operating frequency. At the RTL level, the program counter advances one instruction on every enabled clock; the system benches count 39 enabled clocks including three samples of each program's terminal self-loop.
+
+## 5. Harvard and Shared-Port Comparison
+
+The implemented system has two independent local-memory paths. `tb_memory_hierarchy.v` drives five instruction fetches and two data reads across five logical processor cycles and observes seven successful services. The shared-port reference serializes the same requests into seven slots because it grants at most one request at a time. This experiment demonstrates the structural-access difference only; it is not a timing or whole-program speedup measurement.

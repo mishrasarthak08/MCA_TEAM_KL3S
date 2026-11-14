@@ -22,3 +22,8 @@ Thumbs.db
 *.fls
 *.fdb_latexmk
 *.synctex.gz
+
+# Repository-local tool caches
+.cache/
+.tectonic-home-test/
+report/figures/*.pdf

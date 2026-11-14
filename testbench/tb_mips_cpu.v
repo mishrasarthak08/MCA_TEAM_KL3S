@@ -55,7 +55,9 @@ module tb_mips_cpu;
         .IMEM_DEPTH     (256),
         .DMEM_DEPTH     (256),
         .IMEM_INIT_FILE ("programs/array_sum.hex"),
-        .DMEM_INIT_FILE ("programs/array_sum_data.hex")
+        .DMEM_INIT_FILE ("programs/array_sum_data.hex"),
+        .IMEM_INIT_WORDS(13),
+        .DMEM_INIT_WORDS(6)
     ) sys_inst (
         .clk                  (clk),
         .rst                  (rst),
@@ -158,7 +160,7 @@ module tb_mips_cpu;
         $display("================================================================================\n");
 
         if (errors == 0) begin
-            $display("PROGRAM 1 (ARRAY SUM) VERIFICATION: PASSED!");
+            $display("PROGRAM 1 (ARRAY SUM) VERIFICATION: ALL %0d CHECKS PASSED!", overall_tests);
         end else begin
             $display("PROGRAM 1 (ARRAY SUM) VERIFICATION: FAILED with %0d errors!", errors);
             $fatal(1);

@@ -42,6 +42,7 @@ module tb_mips_cpu_max;
 
     integer cycle_count;
     integer errors = 0;
+    integer overall_tests = 0;
     integer trap_counter = 0;
 
     // 100 MHz clock generation
@@ -51,7 +52,9 @@ module tb_mips_cpu_max;
         .IMEM_DEPTH     (256),
         .DMEM_DEPTH     (256),
         .IMEM_INIT_FILE ("programs/max_search.hex"),
-        .DMEM_INIT_FILE ("programs/max_search_data.hex")
+        .DMEM_INIT_FILE ("programs/max_search_data.hex"),
+        .IMEM_INIT_WORDS(16),
+        .DMEM_INIT_WORDS(6)
     ) sys_inst (
         .clk                  (clk),
         .rst                  (rst),
@@ -123,6 +126,7 @@ module tb_mips_cpu_max;
         $display("Execution halted at Cycle %0d. Evaluating Program 2 Results...", cycle_count);
 
         // Verification of Program 2
+        overall_tests = overall_tests + 1;
         debug_mem_addr = 32'd5; // Word index 5 (byte offset 20)
         #5;
         if (debug_mem_data === 32'h0000000B) begin
@@ -133,6 +137,7 @@ module tb_mips_cpu_max;
             errors = errors + 1;
         end
 
+        overall_tests = overall_tests + 1;
         debug_reg_addr = 5'd16; // $s0 (current max)
         #5;
         if (debug_reg_data === 32'h0000000B) begin
@@ -146,7 +151,7 @@ module tb_mips_cpu_max;
         $display("================================================================================\n");
 
         if (errors == 0) begin
-            $display("PROGRAM 2 (MAXIMUM SEARCH) VERIFICATION: PASSED!");
+            $display("PROGRAM 2 (MAXIMUM SEARCH) VERIFICATION: ALL %0d CHECKS PASSED!", overall_tests);
         end else begin
             $display("PROGRAM 2 (MAXIMUM SEARCH) VERIFICATION: FAILED with %0d errors!", errors);
             $fatal(1);

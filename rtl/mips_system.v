@@ -11,7 +11,9 @@ module mips_system #(
     parameter IMEM_DEPTH     = 256,
     parameter DMEM_DEPTH     = 256,
     parameter IMEM_INIT_FILE = "",
-    parameter DMEM_INIT_FILE = ""
+    parameter DMEM_INIT_FILE = "",
+    parameter IMEM_INIT_WORDS = IMEM_DEPTH,
+    parameter DMEM_INIT_WORDS = DMEM_DEPTH
 )(
     input  wire        clk,
     input  wire        rst,
@@ -97,7 +99,8 @@ module mips_system #(
     // -------------------------------------------------------------------------
     instruction_memory #(
         .MEM_DEPTH     (IMEM_DEPTH),
-        .MEM_INIT_FILE (IMEM_INIT_FILE)
+        .MEM_INIT_FILE (IMEM_INIT_FILE),
+        .MEM_INIT_WORDS(IMEM_INIT_WORDS)
     ) imem_inst (
         .addr            (core_pc),
         .instruction     (core_instruction),
@@ -110,7 +113,8 @@ module mips_system #(
     // -------------------------------------------------------------------------
     data_memory #(
         .MEM_DEPTH     (DMEM_DEPTH),
-        .MEM_INIT_FILE (DMEM_INIT_FILE)
+        .MEM_INIT_FILE (DMEM_INIT_FILE),
+        .MEM_INIT_WORDS(DMEM_INIT_WORDS)
     ) dmem_inst (
         .clk             (clk),
         .mem_read        (core_dmem_read),

@@ -4,6 +4,7 @@
 # =============================================================================
 
 IVERILOG = iverilog
+IVERILOG_FLAGS = -g2001 -Wall
 VVP      = vvp
 YOSYS    = yosys
 PYTHON   = python3
@@ -26,9 +27,9 @@ RTL_SRCS = rtl/program_counter.v \
 SIM_DIR = sim_bin
 WAVE_DIR = waveforms
 
-.PHONY: all assemble test test-alu test-rf test-dec test-mem test-bj test-invalid test-cpu demo-sum demo-max synth waves report clean help
+.PHONY: all assemble test test-alu test-rf test-dec test-mem test-hierarchy test-bj test-invalid test-cpu demo-sum demo-max synth figures waves report clean help
 
-all: assemble test demo-sum demo-max synth report
+all: assemble test synth report
 
 # --- Assembler Target ---
 assemble:
@@ -38,45 +39,51 @@ assemble:
 	@echo "==> Assembly completed successfully."
 
 # --- Comprehensive Test Suite ---
-test: test-alu test-rf test-dec test-mem test-bj test-invalid test-cpu
+test: test-alu test-rf test-dec test-mem test-hierarchy test-bj test-invalid test-cpu
 	@echo "============================================="
-	@echo "  ALL VERIFICATION TEST SUITES PASSED!       "
+	@echo "  ALL 95 VERIFICATION CHECKS PASSED!         "
 	@echo "============================================="
 
 test-alu:
 	@echo "==> Running ALU Testbench..."
 	@mkdir -p $(SIM_DIR) $(WAVE_DIR)
-	$(IVERILOG) -g2001 -o $(SIM_DIR)/sim_alu rtl/alu.v testbench/tb_alu.v
+	$(IVERILOG) $(IVERILOG_FLAGS) -o $(SIM_DIR)/sim_alu rtl/alu.v testbench/tb_alu.v
 	$(VVP) $(SIM_DIR)/sim_alu
 
 test-rf:
 	@echo "==> Running Register File Testbench..."
 	@mkdir -p $(SIM_DIR) $(WAVE_DIR)
-	$(IVERILOG) -g2001 -o $(SIM_DIR)/sim_rf rtl/register_file.v testbench/tb_register_file.v
+	$(IVERILOG) $(IVERILOG_FLAGS) -o $(SIM_DIR)/sim_rf rtl/register_file.v testbench/tb_register_file.v
 	$(VVP) $(SIM_DIR)/sim_rf
 
 test-dec:
 	@echo "==> Running Instruction Decoder & ALU Control Testbench..."
 	@mkdir -p $(SIM_DIR) $(WAVE_DIR)
-	$(IVERILOG) -g2001 -o $(SIM_DIR)/sim_dec rtl/mips_decoder.v rtl/alu_control.v testbench/tb_decoder.v
+	$(IVERILOG) $(IVERILOG_FLAGS) -o $(SIM_DIR)/sim_dec rtl/mips_decoder.v rtl/alu_control.v testbench/tb_decoder.v
 	$(VVP) $(SIM_DIR)/sim_dec
 
 test-mem: assemble
 	@echo "==> Running Memory Interface Testbench..."
 	@mkdir -p $(SIM_DIR) $(WAVE_DIR)
-	$(IVERILOG) -g2001 -o $(SIM_DIR)/sim_mem rtl/instruction_memory.v rtl/data_memory.v testbench/tb_memory.v
+	$(IVERILOG) $(IVERILOG_FLAGS) -o $(SIM_DIR)/sim_mem rtl/instruction_memory.v rtl/data_memory.v testbench/tb_memory.v
 	$(VVP) $(SIM_DIR)/sim_mem
+
+test-hierarchy: assemble
+	@echo "==> Running Harvard vs Shared Memory Comparison Testbench..."
+	@mkdir -p $(SIM_DIR) $(WAVE_DIR)
+	$(IVERILOG) $(IVERILOG_FLAGS) -o $(SIM_DIR)/sim_hierarchy rtl/instruction_memory.v rtl/data_memory.v rtl/shared_memory_arbiter.v testbench/tb_memory_hierarchy.v
+	$(VVP) $(SIM_DIR)/sim_hierarchy
 
 test-bj:
 	@echo "==> Running Branch & Jump Logic Testbench..."
 	@mkdir -p $(SIM_DIR) $(WAVE_DIR)
-	$(IVERILOG) -g2001 -o $(SIM_DIR)/sim_bj rtl/branch_jump_logic.v testbench/tb_branch_jump.v
+	$(IVERILOG) $(IVERILOG_FLAGS) -o $(SIM_DIR)/sim_bj rtl/branch_jump_logic.v testbench/tb_branch_jump.v
 	$(VVP) $(SIM_DIR)/sim_bj
 
 test-invalid:
 	@echo "==> Running Architectural Robustness (Invalid Instruction) Testbench..."
 	@mkdir -p $(SIM_DIR) $(WAVE_DIR)
-	$(IVERILOG) -g2001 -o $(SIM_DIR)/sim_invalid $(RTL_SRCS) testbench/tb_invalid_instr.v
+	$(IVERILOG) $(IVERILOG_FLAGS) -o $(SIM_DIR)/sim_invalid $(RTL_SRCS) testbench/tb_invalid_instr.v
 	$(VVP) $(SIM_DIR)/sim_invalid
 
 test-cpu: demo-sum demo-max
@@ -85,13 +92,13 @@ test-cpu: demo-sum demo-max
 demo-sum: assemble
 	@echo "==> Running Program 1 Demo: Array Sum (Expected: 14)..."
 	@mkdir -p $(SIM_DIR) $(WAVE_DIR)
-	$(IVERILOG) -g2001 -o $(SIM_DIR)/sim_cpu_sum $(RTL_SRCS) testbench/tb_mips_cpu.v
+	$(IVERILOG) $(IVERILOG_FLAGS) -o $(SIM_DIR)/sim_cpu_sum $(RTL_SRCS) testbench/tb_mips_cpu.v
 	$(VVP) $(SIM_DIR)/sim_cpu_sum
 
 demo-max: assemble
 	@echo "==> Running Program 2 Demo: Maximum Search (Expected: 11)..."
 	@mkdir -p $(SIM_DIR) $(WAVE_DIR)
-	$(IVERILOG) -g2001 -o $(SIM_DIR)/sim_cpu_max $(RTL_SRCS) testbench/tb_mips_cpu_max.v
+	$(IVERILOG) $(IVERILOG_FLAGS) -o $(SIM_DIR)/sim_cpu_max $(RTL_SRCS) testbench/tb_mips_cpu_max.v
 	$(VVP) $(SIM_DIR)/sim_cpu_max
 
 # --- Synthesis Target ---
@@ -107,11 +114,19 @@ waves:
 		echo "GTKWave is not installed. Inspect VCD files in $(WAVE_DIR)/"; \
 	fi
 
-# --- Report Compilation Target ---
-report:
+# --- Report Figure and Compilation Targets ---
+figures:
+	@echo "==> Generating report figures..."
+	@mkdir -p report/figures
+	dot -Tpng -Gdpi=300 report/figures/harvard_architecture.dot -o report/figures/harvard_architecture.png
+	dot -Tpng -Gdpi=300 report/figures/memory_service_comparison.dot -o report/figures/memory_service_comparison.png
+
+report: figures
 	@echo "==> Compiling IEEE Project Report with Tectonic..."
 	@if command -v $(TECTONIC) >/dev/null 2>&1; then \
-		cd report && $(TECTONIC) main.tex && cd .. && echo "==> Report compiled successfully to report/main.pdf"; \
+		mkdir -p .cache/tectonic-home && \
+		cd report && HOME="$(CURDIR)/.cache/tectonic-home" $(TECTONIC) main.tex && \
+		echo "==> Report compiled successfully to report/main.pdf"; \
 	else \
 		echo "Tectonic not found. Provide LaTeX compiler to generate PDF."; \
 	fi
@@ -127,8 +142,10 @@ help:
 	@echo "  make all          : Assemble, run all tests, demos, synthesis, and compile report"
 	@echo "  make assemble     : Assemble MIPS assembly source programs into hex"
 	@echo "  make test         : Run all unit and system testbenches"
+	@echo "  make test-hierarchy: Compare Harvard and shared-memory service behavior"
 	@echo "  make demo-sum     : Execute Program 1 (Array Sum = 14)"
 	@echo "  make demo-max     : Execute Program 2 (Maximum Search = 11)"
 	@echo "  make synth        : Run Yosys RTL synthesis and cell statistics"
+	@echo "  make figures      : Generate figures used by the IEEE report"
 	@echo "  make report       : Compile IEEE project report PDF using Tectonic"
 	@echo "  make clean        : Remove temporary simulation binaries"

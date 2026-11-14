@@ -1,0 +1,15 @@
+digraph MemoryServiceComparison {
+  graph [rankdir=TB, bgcolor="transparent", margin=0.03, nodesep=0.12, ranksep=0.20];
+  node [shape=plaintext, fontname="Helvetica", fontsize=8.5];
+
+  schedule [label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4" COLOR="#64748B">
+      <TR><TD BGCOLOR="#E2E8F0"><B>Organization</B></TD><TD BGCOLOR="#E2E8F0"><B>1</B></TD><TD BGCOLOR="#E2E8F0"><B>2</B></TD><TD BGCOLOR="#E2E8F0"><B>3</B></TD><TD BGCOLOR="#E2E8F0"><B>4</B></TD><TD BGCOLOR="#E2E8F0"><B>5</B></TD><TD BGCOLOR="#E2E8F0"><B>6</B></TD><TD BGCOLOR="#E2E8F0"><B>7</B></TD></TR>
+      <TR><TD ALIGN="LEFT"><B>Harvard</B></TD><TD>I</TD><TD BGCOLOR="#DCFCE7">I + D</TD><TD>I</TD><TD BGCOLOR="#DCFCE7">I + D</TD><TD>I</TD><TD COLSPAN="2" BGCOLOR="#F8FAFC">complete</TD></TR>
+      <TR><TD ALIGN="LEFT"><B>Shared port</B></TD><TD>I</TD><TD>D</TD><TD>I</TD><TD>I</TD><TD>D</TD><TD>I</TD><TD>I</TD></TR>
+    </TABLE>
+  >];
+
+  note [label="Trace: 5 instruction fetches + 2 data reads\nHarvard: 5 processor cycles | Shared port: 7 service slots", fontcolor="#334155"];
+  schedule -> note [style=invis];
+}

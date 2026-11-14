@@ -41,7 +41,7 @@ module tb_alu;
         input [3:0]  ctrl,
         input [31:0] exp_res,
         input        exp_zero,
-        input [127:0] test_name
+        input [255:0] test_name
     );
         begin
             tests = tests + 1;

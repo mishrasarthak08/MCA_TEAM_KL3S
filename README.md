@@ -1,289 +1,174 @@
-# Single-Cycle MIPS Processor with Memory Interface
+# Instruction and Data Memory Hierarchy
 
-[![Verilog-2001](https://img.shields.io/badge/HDL-Verilog--2001-blue.svg)](http://www.verilog.com/)
-[![Simulation-Icarus](https://img.shields.io/badge/Simulation-Icarus_Verilog_13.0-brightgreen.svg)](https://steveicarus.github.io/iverilog/)
-[![Synthesis-Yosys](https://img.shields.io/badge/Synthesis-Yosys_0.71-orange.svg)](https://yosyshq.net/yosys/)
-[![Format-IEEEtran](https://img.shields.io/badge/Report-IEEEtran_Conference-purple.svg)](report/main.pdf)
-[![License-MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Verification-100%_Pass](https://img.shields.io/badge/Tests-85%2F85_Passed-success.svg)](reports/simulation_results.md)
+[![HDL](https://img.shields.io/badge/HDL-Verilog--2001-2563EB.svg)](https://standards.ieee.org/ieee/1364/2048/)
+[![Simulator](https://img.shields.io/badge/Simulator-Icarus_Verilog_13-16A34A.svg)](https://steveicarus.github.io/iverilog/)
+[![Synthesis](https://img.shields.io/badge/Synthesis-Yosys_0.71-EA580C.svg)](https://yosyshq.net/yosys/)
+[![Report](https://img.shields.io/badge/Report-IEEEtran-7E22CE.svg)](report/main.pdf)
+[![Regression](https://img.shields.io/badge/Checks-95%2F95_passed-15803D.svg)](reports/simulation_results.md)
 
-An intermediate-to-advanced Computer Architecture project implementing a functional, 32-bit Harvard-architecture Single-Cycle MIPS processor in synthesizable Verilog-2001. Designed for rigorous academic evaluation across three core deliverables:
-1. **IEEE Project Report** (10 Marks): Located in [report/main.pdf](report/main.pdf) (compiled with official `IEEEtran` conference class).
-2. **Prototype Demonstration Video** (15 Marks): Scripted in [docs/video_script.md](docs/video_script.md) (4m30s duration, < 5 min limit).
-3. **GitHub Repository** (5 Marks): Complete reproducible codebase with automated Makefile tooling.
+Team KL3S implements a simplified Harvard-style memory organization with separate instruction and data paths, integrated into a 32-bit single-cycle educational MIPS processor. The repository includes synthesizable RTL, a shared-memory comparison reference, self-checking testbenches, two complete programs, VCD waveforms, a custom assembler, synthesis evidence, and a compiled IEEE conference-format report.
 
----
+The Phase I submission deadline is **November 16, 2026 at 11:59 PM IST**.
 
-## 1. Project Overview & Objectives
+## What the Project Demonstrates
 
-The processor fetches, decodes, executes, performs memory transactions, and commits register state within **one clock cycle per instruction** ($\text{CPI} = 1.00$).
+- Independent 256-word instruction ROM and 256-word data RAM interfaces.
+- Simultaneous instruction fetch and data access on separate Harvard paths.
+- A single-port, data-priority arbiter as a shared-memory comparison reference.
+- Word-alignment and address-bounds detection.
+- An 11-instruction MIPS-like subset: ADD, SUB, AND, OR, XOR, SLT, ADDI, LW, SW, BEQ, and J.
+- Safe suppression of register and memory writes for invalid instructions.
+- End-to-end execution of Array Sum and Maximum Search programs.
 
-### Core Objectives
-- **Instruction Execution:** Full hardware execution of arithmetic, logic, immediate, memory load/store, conditional branching, and unconditional jumps.
-- **Modular Memory Architecture:** Physically segregated 32-bit Instruction Memory (ROM) and Data Memory (RAM) interfaces conforming to Harvard architecture.
-- **Architectural Integrity:** Physical invariance of register `$0` (`$zero` reads `0x00000000`, writes dropped), sign-extension of 16-bit immediates, and word-alignment checking (`addr[1:0] == 2'b00`).
-- **Hardware Robustness:** Automatic detection of illegal opcodes and invalid function codes, suppressing write strobes to prevent state corruption.
-- **Benchmark Demonstrations:** Execution of two complete programs from machine-code hex files:
-  1. **Array Sum:** Accumulates `[3, 1, 4, 1, 5]` to yield **14** at Memory[20].
-  2. **Maximum Element Search:** Iterates `[7, 2, 11, 4, 9]` to yield **11** at Memory[20].
+The controlled memory trace performs five instruction fetches and two data reads. Separate Harvard paths complete the seven services in five processor cycles; the single shared port needs seven service slots. This is a memory-service comparison, not a whole-program speedup claim.
 
----
+## Verified Results
 
-## 2. Supported Instruction Set Architecture (ISA)
+| Evidence | Result |
+|---|---:|
+| Unit, robustness, and hierarchy checks | 91 / 91 passed |
+| Program end-state checks | 4 / 4 passed |
+| Complete regression | **95 / 95 passed** |
+| Array Sum | `[3, 1, 4, 1, 5] -> 14` at byte address 20 |
+| Maximum Search | `[7, 2, 11, 4, 9] -> 11` at byte address 20 |
+| Observed cycles per program | 39, including three halt-loop samples |
+| Yosys core synthesis | 9,002 generic cells, 1,024 flip-flops, 0 latches |
 
-The processor implements 11 educational MIPS32 instructions with zero branch delay slots:
+No FPGA board was programmed. No post-layout frequency, timing closure, power, or physical utilization result is claimed.
 
-| Instruction | Type | Format | Opcode / Funct | Operation |
-|---|:---:|---|:---:|---|
-| **ADD** | R | `ADD rd, rs, rt` | Op: `000000`, Funct: `100000` (`0x20`) | $R[rd] = R[rs] + R[rt]$ |
-| **SUB** | R | `SUB rd, rs, rt` | Op: `000000`, Funct: `100010` (`0x22`) | $R[rd] = R[rs] - R[rt]$ |
-| **AND** | R | `AND rd, rs, rt` | Op: `000000`, Funct: `100100` (`0x24`) | $R[rd] = R[rs] \ \& \ R[rt]$ |
-| **OR** | R | `OR rd, rs, rt` | Op: `000000`, Funct: `100101` (`0x25`) | $R[rd] = R[rs] \ \| \ R[rt]$ |
-| **XOR** | R | `XOR rd, rs, rt` | Op: `000000`, Funct: `100110` (`0x26`) | $R[rd] = R[rs] \ \oplus \ R[rt]$ |
-| **SLT** | R | `SLT rd, rs, rt` | Op: `000000`, Funct: `101010` (`0x2A`) | $R[rd] = (\$signed(R[rs]) < \$signed(R[rt])) \ ? \ 1 : 0$ |
-| **ADDI** | I | `ADDI rt, rs, imm` | Op: `001000` (`0x08`) | $R[rt] = R[rs] + \text{SignExt}(imm)$ |
-| **LW** | I | `LW rt, offset(rs)` | Op: `100011` (`0x23`) | $R[rt] = \text{Memory}[R[rs] + \text{SignExt}(offset)]$ |
-| **SW** | I | `SW rt, offset(rs)` | Op: `101011` (`0x2B`) | $\text{Memory}[R[rs] + \text{SignExt}(offset)] = R[rt]$ |
-| **BEQ** | I | `BEQ rs, rt, label` | Op: `000100` (`0x04`) | $\text{if } R[rs] == R[rt]: \ PC = PC + 4 + (\text{SignExt}(imm) \ll 2)$ |
-| **J** | J | `J target` | Op: `000010` (`0x02`) | $PC = \{ (PC + 4)[31:28], target[25:0], 2'b00 \}$ |
-
----
-
-## 3. Microarchitecture & Block Diagram
+## Architecture
 
 ```text
-       +-------------------------------------------------------------------------+
-       |                                                                         |
-       v                                                                         |
-   +-------+   PC    +--------------------+  Instruction  +-------------------+  |
-   |  PC   |-------->| Instruction Memory |-------------->| Main Decoder &    |  |
-   +-------+         | (256 x 32-bit ROM) |               | ALU Control Unit  |  |
-       |             +--------------------+               +-------------------+  |
-       | (PC+4)                |                                    |            |
-       |                       | rs, rt, rd, imm                    | Controls   |
-       v                       v                                    v            |
-   +-------+         +--------------------+               +-------------------+  |
-   | Adder |         |   Register File    |-------------->| 32-Bit ALU &      |  |
-   +-------+         | (32 x 32-bit GPRs) |  Data1, Data2 | Sign-Extend Unit  |  |
-       |             +--------------------+               +-------------------+  |
-       |                       ^                                    |            |
-       |                       | Write Data                         | ALU Result |
-       |                       |                                    v            |
-       |             +--------------------+  Read Data    +-------------------+  |
-       |             | Write-Back Logic   |<--------------| Data Memory (RAM) |  |
-       |             | (Multiplexers)     |               | (256 x 32-bit)    |  |
-       |             +--------------------+               +-------------------+  |
-       |                                                            |            |
-       +-------------------> [ Branch & Jump Logic ] ---------------+            |
-                                     |                                           |
-                                     +------------------- Next PC ---------------+
+ Program Counter ---> Instruction Memory ---> Decode / Register File / ALU
+       ^                         |                         |
+       |                         | instruction             | address + controls
+       |                         v                         v
+       +----------------- Branch / Jump <----------> Data Memory
+                            next PC              independent data path
 ```
 
-Interactive Mermaid diagrams are available in [docs/block_diagram.mmd](docs/block_diagram.mmd) and [docs/datapath_diagram.mmd](docs/datapath_diagram.mmd).
+The complete diagrams are in [docs/block_diagram.mmd](docs/block_diagram.mmd) and [docs/datapath_diagram.mmd](docs/datapath_diagram.mmd). The IEEE report includes rendered architecture and memory-service figures.
 
----
+## Quick Start
 
-## 4. Repository Structure
+### Prerequisites
 
-```text
-MCA_TEAM_KL3S/
-│
-├── README.md                           # Master Project Documentation & Quickstart
-├── LICENSE                             # MIT Open-Source License
-├── Makefile                            # Unified Automation Script for Simulation, Synthesis, and Build
-│
-├── rtl/                                # Synthesizable Verilog-2001 RTL Source Files
-│   ├── program_counter.v               # 32-bit Program Counter Register
-│   ├── instruction_memory.v            # Word-aligned Instruction ROM ($readmemh supported)
-│   ├── mips_decoder.v                  # Main Instruction Control Decoder
-│   ├── alu_control.v                   # ALU Secondary Operation Decoder
-│   ├── register_file.v                 # 32x32-bit Dual-Read Single-Write Register File
-│   ├── sign_extend.v                   # 16-to-32 bit Arithmetic Sign Extender
-│   ├── alu.v                           # 32-bit Arithmetic Logic Unit
-│   ├── data_memory.v                   # Byte-addressed RAM with Bounds Protection
-│   ├── branch_jump_logic.v             # Next-PC Calculation & Priority Multiplexers
-│   ├── writeback_logic.v               # Destination & Data Write-Back Multiplexers
-│   ├── mips_core.v                     # Complete Processor Core (Datapath + Control)
-│   └── mips_system.v                   # Top-Level System with Memory & Debug Busses
-│
-├── testbench/                          # Self-Checking Verification Testbenches
-│   ├── tb_alu.v                        # Unit Testbench for ALU (23 checks)
-│   ├── tb_register_file.v              # Unit Testbench for Register File (19 checks)
-│   ├── tb_decoder.v                    # Unit Testbench for Decoder & ALU Control (17 checks)
-│   ├── tb_memory.v                     # Testbench for Memory Interfaces (12 checks)
-│   ├── tb_branch_jump.v                # Testbench for Branch and Jump Logic (8 checks)
-│   ├── tb_invalid_instr.v              # Robustness & Error Suppression Testbench (6 checks)
-│   ├── tb_mips_cpu.v                   # Master CPU Integration Testbench: Array Sum (39 cycles)
-│   └── tb_mips_cpu_max.v               # Master CPU Integration Testbench: Max Search (39 cycles)
-│
-├── programs/                           # MIPS Assembly Benchmarks & Machine Code
-│   ├── array_sum.asm                   # Source Assembly: Array Accumulation
-│   ├── array_sum.hex                   # Assembled Machine Code Hex (13 instructions)
-│   ├── array_sum_data.hex              # Data Memory Initialization ([3, 1, 4, 1, 5])
-│   ├── array_sum_listing.txt           # Disassembly Listing with Symbol Table
-│   ├── max_search.asm                  # Source Assembly: Maximum Element Search
-│   ├── max_search.hex                  # Assembled Machine Code Hex (16 instructions)
-│   ├── max_search_data.hex             # Data Memory Initialization ([7, 2, 11, 4, 9])
-│   └── max_search_listing.txt          # Disassembly Listing with Symbol Table
-│
-├── tools/
-│   └── assemble.py                     # Custom Two-Pass MIPS Assembler with Label Resolution
-│
-├── docs/                               # Architectural & Verification Documentation
-│   ├── architecture.md                 # Detailed Architectural Specification
-│   ├── block_diagram.mmd               # Mermaid Block Diagram
-│   ├── datapath_diagram.mmd            # Mermaid Datapath Diagram
-│   ├── control_signals.md              # Control Signal Truth Tables & Encodings
-│   ├── verification.md                 # Comprehensive Verification Plan & Coverage
-│   ├── video_script.md                 # 4m30s Prototype Demonstration Video Script
-│   ├── evaluation_checklist.md         # Academic Grading Rubric Compliance Matrix
-│   └── team_contributions.md           # Individual Group Member Contribution Table
-│
-├── report/                             # Academic Project Report (Official IEEEtran Class)
-│   ├── main.tex                        # LaTeX Source Code (\documentclass[conference]{IEEEtran})
-│   ├── references.bib                  # BibTeX References (Authentic academic citations)
-│   ├── figures/                        # Diagram Assets
-│   └── main.pdf                        # Compiled Two-Column IEEE Project Report PDF
-│
-├── waveforms/                          # Simulation Waveform Dumps (VCD) & Configs
-│   ├── README.md                       # Waveform Interpretation Guide
-│   ├── mips_cpu.gtkw                   # Pre-configured GTKWave Signal Layout
-│   ├── mips_cpu_array_sum.vcd          # Full Waveform Dump: Array Sum
-│   ├── mips_cpu_max_search.vcd         # Full Waveform Dump: Maximum Search
-│   ├── tb_alu.vcd                      # Waveform Dump: ALU Unit Test
-│   ├── tb_register_file.vcd            # Waveform Dump: Register File Unit Test
-│   ├── tb_decoder.vcd                  # Waveform Dump: Decoder Unit Test
-│   ├── tb_memory.vcd                   # Waveform Dump: Memory Unit Test
-│   ├── tb_branch_jump.vcd              # Waveform Dump: Branch/Jump Unit Test
-│   └── tb_invalid_instr.vcd            # Waveform Dump: Robustness Unit Test
-│
-└── reports/                            # Hardware and Simulation Evaluation Artifacts
-    ├── simulation_results.md           # Complete Execution Traces and Cycle Counts
-    └── synthesis_report.md             # Yosys 0.71 RTL Synthesis Cell Statistics
-```
-
----
-
-## 5. Prerequisites & Toolchain Setup
-
-To run simulations, synthesis, and report compilation on macOS or Linux:
+macOS with Homebrew:
 
 ```bash
-# macOS (using Homebrew)
-brew install icarus-verilog yosys tectonic python3
+brew install icarus-verilog yosys tectonic graphviz
+```
 
-# Linux (Ubuntu / Debian)
+Ubuntu or Debian:
+
+```bash
 sudo apt-get update
-sudo apt-get install iverilog yosys python3
+sudo apt-get install iverilog yosys graphviz python3 make
 ```
 
----
+Install [Tectonic](https://tectonic-typesetting.github.io/en-US/) separately if it is not available from the Linux package repository.
 
-## 6. Execution Commands & Quickstart
-
-All operations are automated via the root [Makefile](Makefile):
+### Run Everything
 
 ```bash
-# 1. Assemble programs, run full test regression, run both demos, and run synthesis
 make all
-
-# 2. Assemble MIPS source files (.asm -> .hex)
-make assemble
-
-# 3. Execute all unit and system testbenches (85 assertions)
-make test
-
-# 4. Run Program 1 (Array Sum = 14) with live execution trace
-make demo-sum
-
-# 5. Run Program 2 (Maximum Search = 11) with live execution trace
-make demo-max
-
-# 6. Run Yosys RTL Synthesis on mips_core
-make synth
-
-# 7. Compile IEEE Project Report PDF
-make report
-
-# 8. Clean temporary compilation artifacts
-make clean
 ```
 
----
+This assembles both programs, executes the complete regression, runs core synthesis, generates report figures, and compiles `report/main.pdf`.
 
-## 7. Verification Summary
-
-| Test Suite | Module | Total Checks | Outcome | Performance / Result |
-|---|---|:---:|:---:|---|
-| `tb_alu` | `alu.v` | 23 | **PASS** | Signed SLT, boundaries (`0x80000000` vs `0x7FFFFFFF`), zero flag verified |
-| `tb_register_file` | `register_file.v` | 19 | **PASS** | Dual-port reads verified; `$zero` write drops verified; reset clears to 0 |
-| `tb_decoder` | `mips_decoder.v`, `alu_control.v` | 17 | **PASS** | All opcodes, illegal opcodes (`0x3F`, `0x15`), and R-type funct verified |
-| `tb_memory` | `instruction_memory.v`, `data_memory.v` | 12 | **PASS** | Byte-address alignment and memory bounds violations caught |
-| `tb_branch_jump` | `branch_jump_logic.v` | 8 | **PASS** | Sequential PC+4, forward/backward BEQ, jump target, and priority verified |
-| `tb_invalid_instr` | `mips_core.v` | 6 | **PASS** | Write enables deasserted on illegal opcodes; architectural state protected |
-| `tb_mips_cpu` | `mips_system.v` | — | **PASS** | **Array Sum = 14** (39 clock cycles, $\text{CPI} = 1.00$) |
-| `tb_mips_cpu_max` | `mips_system.v` | — | **PASS** | **Maximum Search = 11** (39 clock cycles, $\text{CPI} = 1.00$) |
-| **Total** | — | **85 / 85** | **100% PASS** | Zero failures across all test suites |
-
----
-
-## 8. Logic Synthesis Results (Yosys 0.71)
-
-Synthesizing `mips_core.v` using Yosys targeting generic cell primitives produced:
-- **Top-Level Module Synthesized:** `mips_core` (memories external via Harvard buses)
-- **Total Netlist Cells:** **9,002**
-- **State Flip-Flops (`$_DFFE_PP0P_`):** **1,024** (992 in Register File + 32 in PC)
-- **Multiplexers (`$_MUX_`):** **365**
-- **Logic Gates:** 3,547 AND, 3,630 OR, 216 XOR, 220 NOT
-- **Unintended Latches:** **0** (pure combinational decoding confirmed)
-
-*Hardware Feasibility Note:* No physical FPGA board was programmed or deployed. Detailed cell breakdowns and unverified theoretical FPGA projections are documented in [reports/synthesis_report.md](reports/synthesis_report.md).
-
----
-
-## 9. Waveform Inspection
-
-Open waveform artifacts in GTKWave:
+### Useful Targets
 
 ```bash
-# View Array Sum execution trace
-gtkwave waveforms/mips_cpu_array_sum.vcd waveforms/mips_cpu.gtkw
-
-# View Maximum Search execution trace
-gtkwave waveforms/mips_cpu_max_search.vcd waveforms/mips_cpu.gtkw
+make assemble         # .asm -> .hex and annotated listings
+make test             # all nine self-checking testbenches
+make test-hierarchy   # Harvard vs shared-port comparison only
+make demo-sum         # Array Sum execution trace
+make demo-max         # Maximum Search execution trace
+make synth            # generic Yosys synthesis of mips_core
+make figures          # report figure generation with Graphviz
+make report           # IEEE PDF build with repository-local Tectonic cache
+make clean            # remove simulation binaries
 ```
 
-Detailed signal walkthroughs and timing milestones are documented in [waveforms/README.md](waveforms/README.md).
+## Instruction Set
 
----
+| Instruction | Format | Opcode / Function | Behavior |
+|---|:---:|:---:|---|
+| ADD | R | `0x00 / 0x20` | `rd = rs + rt` |
+| SUB | R | `0x00 / 0x22` | `rd = rs - rt` |
+| AND | R | `0x00 / 0x24` | `rd = rs & rt` |
+| OR | R | `0x00 / 0x25` | `rd = rs | rt` |
+| XOR | R | `0x00 / 0x26` | `rd = rs ^ rt` |
+| SLT | R | `0x00 / 0x2A` | signed less-than comparison |
+| ADDI | I | `0x08` | `rt = rs + sign_extend(imm)` |
+| LW | I | `0x23` | load aligned word from data memory |
+| SW | I | `0x2B` | store aligned word to data memory |
+| BEQ | I | `0x04` | branch when `rs == rt` |
+| J | J | `0x02` | pseudo-direct jump |
 
-## 10. Architectural Limitations
+Branch delay slots are intentionally omitted.
 
-This processor implements an unpipelined educational subset of MIPS32:
-- **Critical Path:** Clock cycle period is bounded by the total combinational latency from Instruction Fetch to Register Write-Back (~25–40 MHz on Artix-7 FPGA).
-- **Branch Delay Slots:** Omitted; branches and jumps take effect immediately on the next clock cycle.
-- **Excluded Features:** Hardware interrupts, exceptions, pipeline hazard units, multiplication/division coprocessor (HI/LO), and byte/halfword loads (`LB`, `LH`).
+## Verification Matrix
 
----
+| Testbench | Scope | Checks |
+|---|---|---:|
+| `tb_alu.v` | Arithmetic, logic, signed SLT, zero flag | 23 |
+| `tb_register_file.v` | Writes, dual reads, reset, `$zero`, debug port | 19 |
+| `tb_decoder.v` | Main decoder, ALU control, invalid encodings | 17 |
+| `tb_memory.v` | Initialization, reads/writes, alignment, bounds | 12 |
+| `tb_memory_hierarchy.v` | Concurrent Harvard service and shared-port contention | 6 |
+| `tb_branch_jump.v` | Sequential, branch, and jump next-PC behavior | 8 |
+| `tb_invalid_instr.v` | Illegal opcode/function write suppression | 6 |
+| `tb_mips_cpu.v` | Array Sum memory and register end state | 2 |
+| `tb_mips_cpu_max.v` | Maximum Search memory and register end state | 2 |
+| **Total** | | **95** |
 
-## 11. Team Information & Deliverables
+Detailed traces are recorded in [reports/simulation_results.md](reports/simulation_results.md). Generated VCD files are explained in [waveforms/README.md](waveforms/README.md).
 
-**Team Name:** KL3S
-**Institution:** Newton School of Technology, Rishihood University
-**Department:** Department of Computer Science and Engineering
-**Academic Module:** Computer Architecture Project Submission (MCA 2026)
+## Repository Structure
 
-| Group Member | Academic Role & Deliverables | Contact & Enrolment Number |
-|---|---|---|
-| **Sarthak Mishra**<br/>(Lead Engineer) | **Lead System Architect & Toolchain Lead**<br/>Top-level core/SoC integration (`mips_core.v`, `mips_system.v`), two-pass assembler (`tools/assemble.py`), automated `Makefile` regression suite, benchmark programs, documentation lead | `sarthak.mishra2024@nst.rishihood.edu.in`<br/>Enrolment: `2401010421` |
-| **Shitanshu Tiwari** | **Control Systems Specialist**<br/>Main opcode decoder (`mips_decoder.v`), ALU control logic (`alu_control.v`), truth tables, decoder unit testbench (`tb_decoder.v`) | `shitanshu.tiwari2024@nst.rishihood.edu.in`<br/>Enrolment: `2401010440` |
-| **Shane Joseph** | **Verification & Testbench Lead**<br/>Self-checking regression test suite (85/85 assertions passed), CPU integration testbenches (`tb_mips_cpu.v`, `tb_invalid_instr.v`), waveform validation | `Shane.2024@nst.rishihood.edu.in`<br/>Enrolment: `2401020062` |
-| **Lakshay Yadav** | **Memory Subsystems Engineer**<br/>$32 \times 32$-bit register file (`register_file.v`) with physical \$0 protection, instruction and data memories (`instruction_memory.v`, `data_memory.v`), branch/jump logic | `Lakshay.yadav2024@nst.rishihood.edu.in`<br/>Enrolment: `2401010250` |
-| **Kshitiz Surana** | **Datapath & Synthesis Specialist**<br/>32-bit ALU (`alu.v`), sign extension (`sign_extend.v`), writeback logic (`writeback_logic.v`), ALU unit testbench (`tb_alu.v`), Yosys RTL synthesis and cell analysis | `kshitiz.2024@nst.rishihood.edu.in`<br/>Enrolment: `2401010242` |
+```text
+.
+├── rtl/                    # processor, memories, and shared-port reference RTL
+├── testbench/              # nine self-checking Verilog testbenches
+├── programs/               # assembly, hex images, data images, listings
+├── tools/assemble.py       # two-pass assembler
+├── docs/                   # architecture, verification, video, rubric, sources
+├── reports/                # simulation and synthesis evidence
+├── waveforms/              # VCD files and GTKWave configuration
+├── report/                 # IEEEtran LaTeX source, bibliography, figures, PDF
+├── Makefile                # reproducible build and verification targets
+└── LICENSE
+```
 
-### Deliverable Artifacts
-- **IEEE Project Report:** [report/main.pdf](report/main.pdf) (official `IEEEtran` conference class; LaTeX source: [report/main.tex](report/main.tex)).
-- **Demonstration Video Script:** [docs/video_script.md](docs/video_script.md) (Duration: 4m30s, max 5m).
-- **Demonstration Video Link:** `https://youtu.be/[REPLACE_WITH_YOUR_UNLISTED_DEMO_VIDEO_ID]` (Pending team recording upload).
-- **Evaluation Checklist:** [docs/evaluation_checklist.md](docs/evaluation_checklist.md).
-- **Team Contribution Matrix:** [docs/team_contributions.md](docs/team_contributions.md).
+## Phase I Deliverables
+
+- IEEE report: [report/main.pdf](report/main.pdf)
+- Editable report source: [report/main.tex](report/main.tex)
+- Research source register: [docs/research_sources.md](docs/research_sources.md)
+- Prototype video script: [docs/video_script.md](docs/video_script.md)
+- Video link: **pending team recording and upload**
+- Rubric checklist: [docs/evaluation_checklist.md](docs/evaluation_checklist.md)
+- Contribution template: [docs/team_contributions.md](docs/team_contributions.md)
+
+## Team
+
+| Member | Enrolment Number | Email | Individual Contribution |
+|---|---|---|---|
+| Sarthak Mishra | `2401010421` | `sarthak.mishra2024@nst.rishihood.edu.in` | |
+| Shitanshu Tiwari | `2401010440` | `shitanshu.tiwari2024@nst.rishihood.edu.in` | |
+| Shane Joseph | `2401020062` | `Shane.2024@nst.rishihood.edu.in` | |
+| Lakshay Yadav | `2401010250` | `Lakshay.yadav2024@nst.rishihood.edu.in` | |
+| Kshitiz Surana | `2401010242` | `kshitiz.2024@nst.rishihood.edu.in` | |
+
+Individual contributions are intentionally blank for the team to complete. The instructor will review Git history, so every member should make meaningful commits from their own GitHub account before submission. Do not fabricate or rewrite contribution history.
+
+## Before Submission
+
+- Complete the contribution table in the report and `docs/team_contributions.md`.
+- Ensure all five members have meaningful, attributable Git commits.
+- Record a video shorter than five minutes and introduce all five members by name.
+- Show the project idea, block diagram, RTL, `make test-hierarchy`, a full program demo, and waveform evidence.
+- Upload the video and replace the pending link in the README and video script.
+- Run `make all` from a clean checkout and confirm `95 / 95` checks pass.
+- Submit the repository URL and confirm `report/main.pdf` opens correctly.

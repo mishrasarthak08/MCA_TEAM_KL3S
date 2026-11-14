@@ -11,7 +11,8 @@
 
 module data_memory #(
     parameter MEM_DEPTH = 256,              // Depth in 32-bit words (256 words = 1KB)
-    parameter MEM_INIT_FILE = ""            // Path to initial hex file
+    parameter MEM_INIT_FILE = "",           // Path to initial hex file
+    parameter MEM_INIT_WORDS = MEM_DEPTH    // Number of words present in the image
 )(
     input  wire        clk,
     input  wire        mem_read,            // Memory read enable (from LW)
@@ -53,7 +54,7 @@ module data_memory #(
             mem[i] = 32'd0;
         end
         if (MEM_INIT_FILE != "") begin
-            $readmemh(MEM_INIT_FILE, mem);
+            $readmemh(MEM_INIT_FILE, mem, 0, MEM_INIT_WORDS - 1);
         end
     end
 

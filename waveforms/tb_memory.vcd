@@ -1,5 +1,5 @@
 $date
-	Sat Nov 14 12:45:49 2026
+	Sat Nov 14 13:36:11 2026
 $end
 $version
 	Icarus Verilog
@@ -38,38 +38,42 @@ $var wire 32 5 read_data [31:0] $end
 $var wire 32 6 debug_word_data [31:0] $end
 $var parameter 32 7 MEM_DEPTH $end
 $var parameter 216 8 MEM_INIT_FILE $end
-$var integer 32 9 i [31:0] $end
+$var parameter 32 9 MEM_INIT_WORDS $end
+$var integer 32 : i [31:0] $end
 $upscope $end
 $scope module uut_imem $end
-$var wire 32 : addr [31:0] $end
-$var wire 30 ; word_addr [29:0] $end
+$var wire 32 ; addr [31:0] $end
+$var wire 30 < word_addr [29:0] $end
 $var wire 1 ! out_of_bounds $end
-$var wire 32 < instruction [31:0] $end
+$var wire 32 = instruction [31:0] $end
 $var wire 1 # alignment_error $end
-$var parameter 32 = MEM_DEPTH $end
-$var parameter 176 > MEM_INIT_FILE $end
-$var integer 32 ? i [31:0] $end
+$var parameter 32 > MEM_DEPTH $end
+$var parameter 176 ? MEM_INIT_FILE $end
+$var parameter 32 @ MEM_INIT_WORDS $end
+$var integer 32 A i [31:0] $end
 $upscope $end
 $scope begin check_dmem_init $end
-$var integer 32 @ w [31:0] $end
+$var integer 32 B w [31:0] $end
 $upscope $end
 $upscope $end
 $enddefinitions $end
 $comment Show the parameter values. $end
 $dumpall
-b1110000011100100110111101100111011100100110000101101101011100110010111101100001011100100111001001100001011110010101111101110011011101010110110100101110011010000110010101111000 >
-b100000000 =
+b1101 @
+b1110000011100100110111101100111011100100110000101101101011100110010111101100001011100100111001001100001011110010101111101110011011101010110110100101110011010000110010101111000 ?
+b100000000 >
+b110 9
 b11100000111001001101111011001110111001001100001011011010111001100101111011000010111001001110010011000010111100101011111011100110111010101101101010111110110010001100001011101000110000100101110011010000110010101111000 8
 b100000000 7
 $end
 #0
 $dumpvars
-bx @
-b100000000 ?
-b100000000010000000000000000000 <
+bx B
+b100000000 A
+b100000000010000000000000000000 =
+b0 <
 b0 ;
-b0 :
-b100000000 9
+b100000000 :
 b11 6
 b0 5
 b0 4
@@ -102,30 +106,30 @@ $end
 b1 0
 #20000
 b100000000100000000000000000000 "
-b100000000100000000000000000000 <
-b11 ;
+b100000000100000000000000000000 =
+b11 <
 0(
 b1100 .
-b1100 :
+b1100 ;
 b10 0
 #25000
 b0 "
+b0 =
 b0 <
-b0 ;
 1#
 1(
 b10 .
-b10 :
+b10 ;
 b11 0
 #30000
 b0 "
-b0 <
+b0 =
 1!
-b100000000000 ;
+b100000000000 <
 0#
 0(
 b10000000000000 .
-b10000000000000 :
+b10000000000000 ;
 b100 0
 #35000
 b11 $
@@ -133,7 +137,7 @@ b11 5
 1(
 1+
 b101 0
-b0 @
+b0 B
 #40000
 b1 $
 b1 5
@@ -142,7 +146,7 @@ b1 4
 b100 *
 b100 1
 b110 0
-b1 @
+b1 B
 #45000
 b100 $
 b100 5
@@ -151,7 +155,7 @@ b10 4
 b1000 *
 b1000 1
 b111 0
-b10 @
+b10 B
 #50000
 b1 $
 b1 5
@@ -160,7 +164,7 @@ b11 4
 b1100 *
 b1100 1
 b1000 0
-b11 @
+b11 B
 #55000
 b101 $
 b101 5
@@ -169,11 +173,11 @@ b100 4
 b10000 *
 b10000 1
 b1001 0
-b100 @
+b100 B
 #60000
 0(
 b1010 0
-b101 @
+b101 B
 #65000
 b0 $
 b0 5

@@ -9,7 +9,8 @@
 
 module instruction_memory #(
     parameter MEM_DEPTH = 256,             // Number of 32-bit instruction words
-    parameter MEM_INIT_FILE = ""           // Path to initial hex file
+    parameter MEM_INIT_FILE = "",          // Path to initial hex file
+    parameter MEM_INIT_WORDS = MEM_DEPTH   // Number of words present in the image
 )(
     input  wire [31:0] addr,               // Byte address from Program Counter
     output wire [31:0] instruction,        // Fetched 32-bit instruction word
@@ -37,7 +38,7 @@ module instruction_memory #(
             mem[i] = 32'h00000000;
         end
         if (MEM_INIT_FILE != "") begin
-            $readmemh(MEM_INIT_FILE, mem);
+            $readmemh(MEM_INIT_FILE, mem, 0, MEM_INIT_WORDS - 1);
         end
     end
 

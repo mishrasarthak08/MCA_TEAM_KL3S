@@ -14,6 +14,7 @@ This directory contains Value Change Dump (`.vcd`) waveform artifacts generated 
 | `tb_register_file.vcd` | Dual-port asynchronous read and synchronous write testing | `read_reg1`, `read_reg2`, `write_reg`, `write_data`, `$zero` protection |
 | `tb_decoder.vcd` | Opcode and ALU control decoding verification | `opcode`, `funct`, `reg_dst`, `alu_src`, `alu_op`, `invalid_opcode` |
 | `tb_memory.vcd` | Memory alignment, bounds checking, and read/write | `addr`, `read_data`, `write_data`, `alignment_error`, `out_of_bounds` |
+| `tb_memory_hierarchy.vcd` | Harvard concurrency and shared-port contention comparison | `instruction`, `dmem_read_data`, `instruction_request`, `data_request`, `instruction_grant`, `data_grant`, `contention` |
 | `tb_branch_jump.vcd` | Next-PC multiplexer, branch adder, and jump logic | `pc`, `pc_plus_4`, `branch_target`, `jump_target`, `take_branch`, `next_pc` |
 | `tb_invalid_instr.vcd` | Architectural robustness and write suppression | `test_instruction`, `invalid_instruction`, `debug_reg_write`, `dmem_write` |
 
