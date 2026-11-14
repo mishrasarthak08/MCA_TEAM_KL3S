@@ -13,16 +13,17 @@
 
 \author{
   \IEEEauthorblockN{
-    [Author 1]\IEEEauthorrefmark{1},
-    [Author 2]\IEEEauthorrefmark{2},
-    [Author 3]\IEEEauthorrefmark{3},
-    [Author 4]\IEEEauthorrefmark{4}, and
-    [Author 5]\IEEEauthorrefmark{5}
+    Sarthak Mishra\IEEEauthorrefmark{1},
+    Shitanshu Tiwari\IEEEauthorrefmark{2},
+    Shane Joseph\IEEEauthorrefmark{3},
+    Lakshay Yadav\IEEEauthorrefmark{4}, and
+    Kshitiz Surana\IEEEauthorrefmark{5}
   }
   \IEEEauthorblockA{
-    Department of Computer Science and Engineering, [Institution / University Name]\\
-    Student IDs: [ID\_1], [ID\_2], [ID\_3], [ID\_4], [ID\_5]\\
-    Email: \{author1, author2, author3, author4, author5\}@institution.edu
+    Department of Computer Science and Engineering\\
+    Newton School of Technology, Rishihood University (Team KL3S)\\
+    Enrolment Nos.: 2401010421, 2401010440, 2401020062, 2401010250, 2401010242\\
+    \{sarthak.mishra2024, shitanshu.tiwari2024, Shane.2024, Lakshay.yadav2024, kshitiz.2024\}@nst.rishihood.edu.in
   }
 }
 
@@ -172,22 +173,32 @@ The processor core (\texttt{mips\_core}) was synthesized using Yosys 0.71 \cite{
 Instruction and data memories are external to \texttt{mips\_core} across Harvard bus interfaces and were excluded from core synthesis. No physical FPGA hardware board was programmed or deployed; any FPGA lookup-table or operating frequency estimates (e.g., $\approx 25\text{--}40\text{ MHz}$) are unverified theoretical projections based on typical cell propagation delays.
 
 \section{Individual Contributions}
-The project was executed by a collaborative team of five members. Specific assigned roles and deliverables are listed below:
+The project was executed by collaborative Team KL3S comprising five members from the Department of Computer Science and Engineering at Newton School of Technology, Rishihood University. Specific assigned engineering specializations and delivered artifacts are summarized in Table~\ref{tab:contributions}.
 
 \begin{table}[htbp]
 \centering
-\caption{Assigned Group Member Responsibilities}
+\caption{Assigned Group Member Responsibilities (Team KL3S)}
 \label{tab:contributions}
 \resizebox{\columnwidth}{!}{%
 \begin{tabular}{@{}lll@{}}
 \toprule
 Team Member & Assigned Engineering Role & Core Contributions \& Artifacts \\
 \midrule
-Member 1 & System Architect & Top-level core/system integration, Makefile automation. \\
-Member 2 & Control Specialist & Main decoder, ALU control logic, control truth tables. \\
-Member 3 & Datapath Engineer & 32-bit ALU, sign extension, writeback logic, synthesis. \\
-Member 4 & Memory Engineer & Register file, instruction and data memory interfaces. \\
-Member 5 & Verification Lead & Python assembler, assembly benchmarks, testbenches. \\
+Sarthak Mishra & Lead System Architect & Top-level core/SoC integration (\texttt{mips\_core.v}, \texttt{mips\_system.v}), \\
+(2401010421) & \& Toolchain Lead & Python assembler (\texttt{tools/assemble.py}), \texttt{Makefile} automation, \\
+ & & benchmark programs, documentation lead. \\
+\midrule
+Shitanshu Tiwari & Control Specialist & Main opcode decoder (\texttt{mips\_decoder.v}), ALU control (\texttt{alu\_control.v}), \\
+(2401010440) & & control truth tables, latch prevention, decoder testbench. \\
+\midrule
+Shane Joseph & Verification Lead & Self-checking regression suite (85/85 assertions passed), \\
+(2401020062) & & CPU integration testbenches (\texttt{tb\_mips\_cpu.v}, \texttt{tb\_invalid\_instr.v}). \\
+\midrule
+Lakshay Yadav & Memory Subsystems & $32\times 32$-bit register file with \$0 protection (\texttt{register\_file.v}), \\
+(2401010250) & \& Branch/Jump Engineer & instruction/data memories, branch/jump target logic. \\
+\midrule
+Kshitiz Surana & Datapath \& Synthesis & 32-bit ALU (\texttt{alu.v}), sign extension, writeback multiplexers, \\
+(2401010242) & Specialist & ALU testbench (\texttt{tb\_alu.v}), Yosys RTL synthesis and cell analysis. \\
 \bottomrule
 \end{tabular}%
 }

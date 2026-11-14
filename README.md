@@ -268,16 +268,22 @@ This processor implements an unpipelined educational subset of MIPS32:
 
 ## 11. Team Information & Deliverables
 
-| Group Member | Academic Role & Deliverables | Contact / ID Placeholder |
+**Team Name:** KL3S
+**Institution:** Newton School of Technology, Rishihood University
+**Department:** Department of Computer Science and Engineering
+**Academic Module:** Computer Architecture Project Submission (MCA 2026)
+
+| Group Member | Academic Role & Deliverables | Contact & Enrolment Number |
 |---|---|---|
-| **Member 1** | System Architect & Integration Lead (`mips_core.v`, `mips_system.v`, `Makefile`) | `[NAME_1]` / `[ID_1]` |
-| **Member 2** | Control Systems Specialist (`mips_decoder.v`, `alu_control.v`) | `[NAME_2]` / `[ID_2]` |
-| **Member 3** | Datapath & ALU Engineer (`alu.v`, `sign_extend.v`, `writeback_logic.v`, Synthesis) | `[NAME_3]` / `[ID_3]` |
-| **Member 4** | Memory Subsystem Engineer (`register_file.v`, `instruction_memory.v`, `data_memory.v`) | `[NAME_4]` / `[ID_4]` |
-| **Member 5** | Verification & Software Lead (`assemble.py`, `array_sum.asm`, `max_search.asm`, Testbenches) | `[NAME_5]` / `[ID_5]` |
+| **Sarthak Mishra**<br/>(Lead Engineer) | **Lead System Architect & Toolchain Lead**<br/>Top-level core/SoC integration (`mips_core.v`, `mips_system.v`), two-pass assembler (`tools/assemble.py`), automated `Makefile` regression suite, benchmark programs, documentation lead | `sarthak.mishra2024@nst.rishihood.edu.in`<br/>Enrolment: `2401010421` |
+| **Shitanshu Tiwari** | **Control Systems Specialist**<br/>Main opcode decoder (`mips_decoder.v`), ALU control logic (`alu_control.v`), truth tables, decoder unit testbench (`tb_decoder.v`) | `shitanshu.tiwari2024@nst.rishihood.edu.in`<br/>Enrolment: `2401010440` |
+| **Shane Joseph** | **Verification & Testbench Lead**<br/>Self-checking regression test suite (85/85 assertions passed), CPU integration testbenches (`tb_mips_cpu.v`, `tb_invalid_instr.v`), waveform validation | `Shane.2024@nst.rishihood.edu.in`<br/>Enrolment: `2401020062` |
+| **Lakshay Yadav** | **Memory Subsystems Engineer**<br/>$32 \times 32$-bit register file (`register_file.v`) with physical \$0 protection, instruction and data memories (`instruction_memory.v`, `data_memory.v`), branch/jump logic | `Lakshay.yadav2024@nst.rishihood.edu.in`<br/>Enrolment: `2401010250` |
+| **Kshitiz Surana** | **Datapath & Synthesis Specialist**<br/>32-bit ALU (`alu.v`), sign extension (`sign_extend.v`), writeback logic (`writeback_logic.v`), ALU unit testbench (`tb_alu.v`), Yosys RTL synthesis and cell analysis | `kshitiz.2024@nst.rishihood.edu.in`<br/>Enrolment: `2401010242` |
 
 ### Deliverable Artifacts
 - **IEEE Project Report:** [report/main.pdf](report/main.pdf) (official `IEEEtran` conference class; LaTeX source: [report/main.tex](report/main.tex)).
 - **Demonstration Video Script:** [docs/video_script.md](docs/video_script.md) (Duration: 4m30s, max 5m).
-- **Demonstration Video Link:** `https://youtu.be/[REPLACE_WITH_YOUR_UNLISTED_DEMO_VIDEO_ID]` (Pending team upload).
+- **Demonstration Video Link:** `https://youtu.be/[REPLACE_WITH_YOUR_UNLISTED_DEMO_VIDEO_ID]` (Pending team recording upload).
 - **Evaluation Checklist:** [docs/evaluation_checklist.md](docs/evaluation_checklist.md).
+- **Team Contribution Matrix:** [docs/team_contributions.md](docs/team_contributions.md).

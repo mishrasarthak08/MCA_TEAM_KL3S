@@ -23,7 +23,7 @@ This document maps every requirement specified in the academic grading criteria 
 | **Section: Simulation & Waveform Analysis** | Required | `report/main.tex` (Section X) | **COMPLIANT** (Array Sum=14 and Max Search=11 trace logs, cycle counts) |
 | **Section: Synthesis Results** | Required | `report/main.tex` (Section XI) | **COMPLIANT** (Real Yosys 0.71 netlist statistics: 9,002 cells, 1,024 FFs, 0 latches) |
 | **Section: Limitations & Future Work** | Required | `report/main.tex` (Section XIII) | **COMPLIANT** (Discloses unpipelined clock penalty, lacks delay slots/interrupts) |
-| **Section: Individual Contributions** | Required | `report/main.tex` (Section XII), `docs/team_contributions.md` | **COMPLIANT** (Table with 5 group members, assigned duties, and placeholders) |
+| **Section: Individual Contributions** | Required | `report/main.tex` (Section XII), `docs/team_contributions.md` | **COMPLIANT** (Table with all 5 Team KL3S members, institutional details, and assigned roles) |
 | **Section: Conclusion** | Required | `report/main.tex` (Section XIV) | **COMPLIANT** (Summary of academic findings and verification outcomes) |
 | **Section: References (IEEE Style)** | Required | `report/references.bib`, `report/main.tex` | **COMPLIANT** (Authentic IEEE citations to Patterson, Kane, IEEE 1364, Williams, Wolf) |
 | **Editable Source & Compiled PDF** | Required | `report/main.tex`, `report/main.pdf` | **COMPLIANT** (Compiled via Tectonic, 0 errors, 0 overfull hboxes) |
@@ -70,11 +70,10 @@ This document maps every requirement specified in the academic grading criteria 
 
 ---
 
-## 2. Summary of Pending Manual Submission Tasks
+## 2. Summary of Remaining Student Action Items
 
-The following tasks require personal inputs or physical actions from the student group:
-1. **Enter Student Names & IDs:** Fill in placeholders `[Author X]` and `[ID_X]` in `report/main.tex`, `docs/team_contributions.md`, and `README.md`.
-2. **Record the Prototype Video:** Follow the script in `docs/video_script.md` using screen recording software (target: 4m30s).
-3. **Upload the Video:** Upload the recorded MP4 to YouTube (as Unlisted/Public) or Google Drive (accessible to evaluators).
-4. **Update Video URL:** Replace the placeholder `https://youtu.be/[REPLACE_WITH_YOUR_UNLISTED_DEMO_VIDEO_ID]` in `README.md`, `docs/video_script.md`, and `report/main.tex`.
-5. **Academic Portal Submission:** Submit the GitHub repository URL and `report/main.pdf` according to the instructor's submission portal.
+The technical implementation, verification, and documentation are complete. The remaining actions for Team KL3S are:
+1. **Record the Prototype Video:** Follow the turn-by-turn script in `docs/video_script.md` using screen recording software with mic audio (target duration: 4m30s, hard limit: $\le$ 5m00s).
+2. **Upload the Video:** Upload the recorded MP4 to YouTube (as Unlisted or Public) or Google Drive (share permissions set to anyone with link).
+3. **Update Video URL:** Replace the placeholder `https://youtu.be/[REPLACE_WITH_YOUR_UNLISTED_DEMO_VIDEO_ID]` in `README.md`, `docs/video_script.md`, and push to GitHub.
+4. **Academic Portal Submission:** Submit the GitHub repository URL (`https://github.com/mishrasarthak08/MCA_TEAM_KL3S`) and `report/main.pdf` according to your course instructor's submission guidelines.
