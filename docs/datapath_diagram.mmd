@@ -1,0 +1,68 @@
+graph TD
+    classDef control fill:#f9f0ea,stroke:#d35400,stroke-width:1.5px;
+    classDef storage fill:#eaf2f8,stroke:#2980b9,stroke-width:1.5px;
+    classDef logic fill:#e8f8f5,stroke:#16a085,stroke-width:1.5px;
+    classDef mux fill:#fef9e7,stroke:#f39c12,stroke-width:1.5px;
+
+    PC["Program Counter"]:::storage
+    IMEM["Instruction Memory"]:::storage
+    PC4_ADD["Adder: PC + 4"]:::logic
+    BRANCH_ADD["Adder: Branch Target"]:::logic
+    NEXT_PC_MUX["Next PC Selection Muxes"]:::mux
+    
+    DECODER["Main Decoder"]:::control
+    ALU_CTRL["ALU Control"]:::control
+    REG_DST_MUX["RegDst Mux"]:::mux
+    REG_FILE["Register File (32x32)"]:::storage
+    SIGN_EXT["Sign Extend (16 to 32)"]:::logic
+    ALU_SRC_MUX["ALUSrc Mux"]:::mux
+    ALU["32-bit ALU"]:::logic
+    DMEM["Data Memory (RAM)"]:::storage
+    WB_MUX["MemToReg Mux"]:::mux
+
+    %% Program Counter Path
+    NEXT_PC_MUX -->|next_pc[31:0]| PC
+    PC -->|pc[31:0]| IMEM
+    PC -->|pc[31:0]| PC4_ADD
+    PC4_ADD -->|pc_plus_4[31:0]| NEXT_PC_MUX
+    PC4_ADD -->|pc_plus_4[31:0]| BRANCH_ADD
+
+    %% Instruction Breakout
+    IMEM -->|opcode[31:26]| DECODER
+    IMEM -->|rs[25:21]| REG_FILE
+    IMEM -->|rt[20:16]| REG_FILE
+    IMEM -->|rt[20:16]| REG_DST_MUX
+    IMEM -->|rd[15:11]| REG_DST_MUX
+    IMEM -->|imm16[15:0]| SIGN_EXT
+    IMEM -->|funct[5:0]| ALU_CTRL
+    IMEM -->|target26[25:0]| NEXT_PC_MUX
+
+    %% Control Signals
+    DECODER -->|RegDst| REG_DST_MUX
+    DECODER -->|ALUSrc| ALU_SRC_MUX
+    DECODER -->|MemToReg| WB_MUX
+    DECODER -->|RegWrite| REG_FILE
+    DECODER -->|MemRead| DMEM
+    DECODER -->|MemWrite| DMEM
+    DECODER -->|Branch| NEXT_PC_MUX
+    DECODER -->|Jump| NEXT_PC_MUX
+    DECODER -->|ALUOp[1:0]| ALU_CTRL
+    ALU_CTRL -->|alu_ctrl[3:0]| ALU
+
+    %% Datapath Connections
+    REG_DST_MUX -->|write_reg[4:0]| REG_FILE
+    REG_FILE -->|read_data1[31:0]| ALU
+    REG_FILE -->|read_data2[31:0]| ALU_SRC_MUX
+    REG_FILE -->|read_data2[31:0]| DMEM
+
+    SIGN_EXT -->|sign_ext_imm[31:0]| ALU_SRC_MUX
+    SIGN_EXT -->|sign_ext_imm << 2| BRANCH_ADD
+    BRANCH_ADD -->|branch_target[31:0]| NEXT_PC_MUX
+
+    ALU_SRC_MUX -->|operand_b[31:0]| ALU
+    ALU -->|result[31:0]| DMEM
+    ALU -->|result[31:0]| WB_MUX
+    ALU -->|zero| NEXT_PC_MUX
+
+    DMEM -->|read_data[31:0]| WB_MUX
+    WB_MUX -->|write_data[31:0]| REG_FILE

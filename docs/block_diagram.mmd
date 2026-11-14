@@ -1,0 +1,68 @@
+graph LR
+    subgraph IF["Instruction Fetch (IF)"]
+        PC["Program Counter<br/>(32-bit Reg)"]
+        PCADD["PC Adder<br/>(PC + 4)"]
+        IMEM["Instruction Memory<br/>(256 x 32-bit ROM)"]
+        PC -->|Address| IMEM
+        PC -->|PC| PCADD
+    end
+
+    subgraph ID["Instruction Decode & Control (ID)"]
+        DEC["Main Control Unit<br/>(mips_decoder)"]
+        ALUDEC["ALU Control Unit<br/>(alu_control)"]
+        RF["Register File<br/>(32 x 32-bit GPRs)"]
+        SE["Sign Extension<br/>(16 -> 32 bit)"]
+        
+        IMEM -->|instruction[31:26]| DEC
+        IMEM -->|instruction[5:0]| ALUDEC
+        IMEM -->|instruction[25:21] rs| RF
+        IMEM -->|instruction[20:16] rt| RF
+        IMEM -->|instruction[15:0]| SE
+    end
+
+    subgraph EX["Execute & Address Calc (EX)"]
+        ALUMUX["ALU Src B Mux<br/>(rt vs SignImm)"]
+        ALU["Arithmetic Logic Unit<br/>(32-bit ALU)"]
+        BRADD["Branch Target Adder<br/>(PC+4 + Imm<<2)"]
+        JMUX["Next-PC Mux Logic<br/>(PC+4 / Branch / Jump)"]
+        
+        RF -->|Read Data 1| ALU
+        RF -->|Read Data 2| ALUMUX
+        SE -->|SignExtImm| ALUMUX
+        SE -->|SignExtImm << 2| BRADD
+        PCADD -->|PC + 4| BRADD
+        DEC -->|ALUSrc| ALUMUX
+        ALUDEC -->|ALUControl[3:0]| ALU
+        ALUMUX -->|Operand B| ALU
+        
+        ALU -->|Zero Flag| JMUX
+        DEC -->|Branch, Jump| JMUX
+        BRADD -->|Branch Target| JMUX
+        IMEM -->|Jump Target 26| JMUX
+        PCADD -->|PC+4| JMUX
+        JMUX -->|Next PC| PC
+    end
+
+    subgraph MEM["Data Memory (MEM)"]
+        DMEM["Data Memory<br/>(256 x 32-bit RAM)"]
+        ALU -->|Address| DMEM
+        RF -->|Write Data (rt)| DMEM
+        DEC -->|MemRead| DMEM
+        DEC -->|MemWrite| DMEM
+    end
+
+    subgraph WB["Write-Back (WB)"]
+        REGMUX["RegDst Mux<br/>(rt vs rd)"]
+        WBMUX["MemToReg Mux<br/>(ALU vs MemData)"]
+        
+        IMEM -->|instruction[20:16] rt| REGMUX
+        IMEM -->|instruction[15:11] rd| REGMUX
+        DEC -->|RegDst| REGMUX
+        REGMUX -->|Write Reg| RF
+        
+        ALU -->|ALU Result| WBMUX
+        DMEM -->|Read Data| WBMUX
+        DEC -->|MemToReg| WBMUX
+        WBMUX -->|Write Data| RF
+        DEC -->|RegWrite| RF
+    end

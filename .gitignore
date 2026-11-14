@@ -1,0 +1,24 @@
+# Simulation executables and temporary build directories
+sim_*
+sim_bin/
+*.o
+*.out
+
+# Python cache
+__pycache__/
+*.pyc
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# LaTeX temporary files (keep .pdf, .tex, .bib)
+*.aux
+*.log
+*.out
+*.toc
+*.bbl
+*.blg
+*.fls
+*.fdb_latexmk
+*.synctex.gz

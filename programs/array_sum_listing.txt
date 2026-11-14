@@ -1,0 +1,20 @@
+=== MIPS32 Assembly Listing: array_sum.asm ===
+Symbol Table:
+  loop             -> 0x0010 (Word 4)
+  done             -> 0x0028 (Word 10)
+  end_loop         -> 0x0030 (Word 12)
+
+Assembly & Machine Code:
+  0x0000 [0x00]: 20080000    ADDI $t0, $zero, 0
+  0x0004 [0x01]: 20090000    ADDI $t1, $zero, 0
+  0x0008 [0x02]: 200a0005    ADDI $t2, $zero, 5
+  0x000c [0x03]: 20100000    ADDI $s0, $zero, 0
+  0x0010 [0x04]: 112a0005    BEQ  $t1, $t2, done
+  0x0014 [0x05]: 8d0b0000    LW   $t3, 0($t0)
+  0x0018 [0x06]: 020b8020    ADD  $s0, $s0, $t3
+  0x001c [0x07]: 21080004    ADDI $t0, $t0, 4
+  0x0020 [0x08]: 21290001    ADDI $t1, $t1, 1
+  0x0024 [0x09]: 08000004    J    loop
+  0x0028 [0x0a]: 200c0014    ADDI $t4, $zero, 20
+  0x002c [0x0b]: ad900000    SW   $s0, 0($t4)
+  0x0030 [0x0c]: 0800000c    J    end_loop

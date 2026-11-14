@@ -1,0 +1,190 @@
+\documentclass[conference]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{geometry}
+\geometry{a4paper, margin=0.75in}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage{cite}
+
+\title{\textbf{Design, RTL Implementation, and Empirical Verification of a Single-Cycle 32-Bit MIPS Processor with Modular Memory Interfaces}}
+
+\author{
+  \textbf{Author 1} (Lead Architect) \quad \textbf{Author 2} (Control Systems) \quad \textbf{Author 3} (ALU \& Datapath) \\
+  \textbf{Author 4} (Memory Subsystems) \quad \textbf{Author 5} (Verification \& Software Tooling) \\
+  Department of Computer Science and Engineering \\
+  Academic Project Group Repository: \texttt{MCA\_TEAM\_KL3S}
+}
+
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+This paper presents the architectural specification, synthesizable Verilog-2001 Register Transfer Level (RTL) implementation, logic synthesis, and verification of an unpipelined 32-bit Single-Cycle MIPS processor. The core implements an educational subset of the MIPS32 Instruction Set Architecture (ISA), supporting R-type arithmetic and logical instructions (ADD, SUB, AND, OR, XOR, SLT), I-type memory and branching instructions (ADDI, LW, SW, BEQ), and the J-type unconditional jump (J). The datapath adopts a Harvard memory organization with segregated instruction and data interfaces, preventing memory structural hazards. Architectural safety features include physical invariance of register \$0, strict address alignment detection, memory bounds checking, and automatic suppression of write strobes on illegal opcodes. A custom two-pass Python assembler was developed to compile symbolic MIPS assembly programs directly into hexadecimal image files. The design was verified via self-checking testbenches executed under Icarus Verilog and synthesized using the Yosys open-source synthesis suite. Full program benchmarks, including an array summation yielding 14 and a maximum search yielding 11, executed in 39 clock cycles with a Cycles Per Instruction (CPI) of exactly 1.00.
+\end{abstract}
+
+\textbf{\textit{Keywords}}---Computer Architecture, Single-Cycle Processor, MIPS32, Verilog RTL, Hardware Synthesis, Logic Verification.
+
+\section{Introduction}
+Modern high-performance computer architectures are characterized by deep pipelines, speculative superscalar execution, and multi-level memory hierarchies. Nevertheless, mastering unpipelined single-cycle Reduced Instruction Set Computer (RISC) architectures remains foundational to hardware engineering. The single-cycle paradigm provides an unambiguous reference model wherein each instruction is fetched, decoded, executed, accesses memory, and writes back within exactly one clock period ($T_{\text{clk}}$).
+
+In this project, we design and empirically verify a 32-bit single-cycle MIPS processor from ground-up RTL specifications. The processor incorporates modular bus interfaces for instruction memory (ROM) and data memory (RAM), eliminating structural hazards.
+
+\section{Literature Review}
+The RISC architectural philosophy, pioneered by Patterson and Hennessy \cite{patterson2020computer}, emphasizes fixed-length instruction formats, register-to-register arithmetic operations, and simple addressing modes to optimize hardware simplicity and clock cycle execution. In classic MIPS architectures, instructions are partitioned into three formats: R-type, I-type, and J-type.
+
+Traditional single-cycle microarchitectures avoid pipeline hazards (data, structural, and control hazards) at the cost of a long critical path constrained by the most complex instruction (Load Word). In educational environments, removing branch delay slots simplifies instruction sequencing and pedagogical clarity without departing from the core instruction execution semantics.
+
+\section{Problem Statement and Objectives}
+The objective of this work is to develop a functional 32-bit single-cycle processor satisfying:
+\begin{enumerate}
+    \item Comprehensive support for 11 core MIPS instructions: ADD, SUB, AND, OR, XOR, SLT, ADDI, LW, SW, BEQ, and J.
+    \item Architectural invariance of register \$0 (hardwired zero reading and write suppression).
+    \item Deterministic sign extension and PC-relative / pseudo-direct jump target computation.
+    \item Full write suppression and fault indication when invalid opcodes or functions are encountered.
+    \item Automated software toolchain support for assembling programs and automated self-checking simulation.
+\end{enumerate}
+
+\section{Proposed Solution}
+Our solution partitions the single-cycle processor into distinct functional units:
+\begin{itemize}
+    \item \textbf{Program Counter (PC):} 32-bit synchronous register with asynchronous active-high reset.
+    \item \textbf{Instruction Memory:} Combinational read ROM with alignment checking and bounds validation.
+    \item \textbf{Main Control Unit:} Combinational decoder producing hazard-free control signals.
+    \item \textbf{Register File:} Dual asynchronous read ports, single synchronous write port, and an external debug port.
+    \item \textbf{ALU \& ALU Control:} 32-bit arithmetic-logic unit supporting arithmetic, logical, and signed comparison functions.
+    \item \textbf{Data Memory:} Byte-addressed RAM with word alignment and write-enable safety checks.
+    \item \textbf{Branch \& Jump Logic:} Parallel calculation of sequential ($PC+4$), branch ($PC+4+(\text{Imm}\ll 2)$), and jump ($\{PC+4[31:28], \text{Addr}, 2'b00\}$) targets.
+\end{itemize}
+
+\section{MIPS Architecture and Instruction Formats}
+The supported instruction set uses 32-bit fixed-length encodings:
+
+\subsection{R-Type Format}
+\[
+\text{Opcode}[31:26] \mid rs[25:21] \mid rt[20:16] \mid rd[15:11] \mid shamt[10:6] \mid funct[5:0]
+\]
+All R-type operations share opcode \texttt{6'b000000}. Function codes include: ADD (\texttt{0x20}), SUB (\texttt{0x22}), AND (\texttt{0x24}), OR (\texttt{0x25}), XOR (\texttt{0x26}), and SLT (\texttt{0x2A}).
+
+\subsection{I-Type Format}
+\[
+\text{Opcode}[31:26] \mid rs[25:21] \mid rt[20:16] \mid \text{Immediate}[15:0]
+\]
+Opcodes: ADDI (\texttt{0x08}), LW (\texttt{0x23}), SW (\texttt{0x2B}), and BEQ (\texttt{0x04}).
+
+\subsection{J-Type Format}
+\[
+\text{Opcode}[31:26] \mid \text{Address}[25:0]
+\]
+Opcode: J (\texttt{0x02}). The target address is computed by concatenating the upper 4 bits of $PC+4$ with the 26-bit immediate shifted left by 2 bits.
+
+\section{Processor Datapath Design}
+The datapath forms a closed loop. At the start of each cycle, the PC supplies the current address to Instruction Memory. Register fields $rs$ and $rt$ index the dual read ports of the Register File. The Sign Extension module expands the 16-bit immediate to 32 bits. Multiplexers select the second ALU operand between $rt$ data and the immediate.
+
+The ALU executes the operation dictated by the ALU Control unit. In memory operations, the ALU result acts as the byte address into Data Memory. Finally, write-back multiplexers choose between the ALU output and memory read data, directing the selected word into the destination register on the rising clock edge.
+
+\section{Control Unit Design}
+The Main Decoder implements truth tables that map the 6-bit opcode into primary control lines:
+\begin{table}[h]
+\centering
+\caption{Main Decoder Control Signals}
+\label{tab:control}
+\begin{tabular}{@{}lcccccccc@{}}
+\toprule
+Instruction & RegDst & ALUSrc & MemToReg & RegWrite & MemRead & MemWrite & Branch & Jump \\
+\midrule
+R-Type & 1 & 0 & 0 & 1 & 0 & 0 & 0 & 0 \\
+ADDI   & 0 & 1 & 0 & 1 & 0 & 0 & 0 & 0 \\
+LW     & 0 & 1 & 1 & 1 & 1 & 0 & 0 & 0 \\
+SW     & 0 & 1 & 0 & 0 & 0 & 1 & 0 & 0 \\
+BEQ    & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 \\
+J      & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 \\
+Invalid& 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Default assignments guarantee that unmapped opcodes disable all register and memory write enables, maintaining system integrity.
+
+\section{RTL Module Implementation}
+The implementation is partitioned across 12 modular Verilog-2001 files:
+\begin{itemize}
+    \item \texttt{program\_counter.v}: Synchronous 32-bit register.
+    \item \texttt{instruction\_memory.v}: ROM with parameterizable depth and word alignment.
+    \item \texttt{mips\_decoder.v}: Main opcode decoder.
+    \item \texttt{alu\_control.v}: Secondary decoder for ALU operation selection.
+    \item \texttt{register\_file.v}: 32-entry dual-read register bank with zero-register protection.
+    \item \texttt{sign\_extend.v}: Two's complement 16-to-32 bit sign extender.
+    \item \texttt{alu.v}: Combinational execution core with zero-detection logic.
+    \item \texttt{data\_memory.v}: Synchronous-write RAM with bounds protection.
+    \item \texttt{branch\_jump\_logic.v}: PC target arithmetic and selection multiplexers.
+    \item \texttt{writeback\_logic.v}: Register destination and data write-back multiplexers.
+    \item \texttt{mips\_core.v}: Datapath-control structural integration.
+    \item \texttt{mips\_system.v}: Harvard top-level system with debug introspection taps.
+\end{itemize}
+
+\section{Simulation and Verification Methodology}
+A bottom-up verification methodology was employed:
+\begin{enumerate}
+    \item \textbf{Unit Testbenches:} \texttt{tb\_alu.v} tested 23 edge cases including signed comparison boundaries (\texttt{0x80000000} vs \texttt{0x7FFFFFFF}). \texttt{tb\_register\_file.v} (19 tests) verified dual-port reads and \$0 write suppression. \texttt{tb\_decoder.v} (17 tests), \texttt{tb\_memory.v} (12 tests), and \texttt{tb\_branch\_jump.v} (8 tests) verified decoding, memory alignment, and branch/jump logic.
+    \item \textbf{Adversarial Testing:} \texttt{tb\_invalid\_instr.v} confirmed that illegal opcodes (e.g. \texttt{0x3F}) and illegal function codes suppress register and memory writes without altering state.
+    \item \textbf{Application Programs:} Two complete MIPS assembly programs were compiled using our Python assembler and verified against actual hardware execution.
+\end{enumerate}
+
+\section{Results and Waveform Analysis}
+Simulation of the complete system in Icarus Verilog confirmed functional correctness:
+\begin{itemize}
+    \item \textbf{Program 1 (Array Sum):} Given an array $[3, 1, 4, 1, 5]$, the processor executed an accumulation loop over 39 clock cycles, successfully storing $14$ (\texttt{0x0000000E}) at memory byte address 20.
+    \item \textbf{Program 2 (Maximum Search):} Given $[7, 2, 11, 4, 9]$, the processor performed sequential SLT comparisons and conditional updates, storing the maximum value $11$ (\texttt{0x0000000B}) at memory byte address 20 in 39 clock cycles.
+\end{itemize}
+
+Every instruction completed in 1 cycle, yielding an empirical CPI of 1.00. Value Change Dump (VCD) waveforms confirmed clean signal transitions without race conditions.
+
+\section{Synthesis Results}
+The processor core was synthesized using Yosys 0.71 targeting generic logic primitives:
+\begin{itemize}
+    \item \textbf{Total Netlist Cells:} 9,002
+    \item \textbf{Sequential Flip-Flops (\texttt{\$\_DFFE\_PP0P\_}):} 1,024 (992 in Register File + 32 in PC)
+    \item \textbf{Multiplexers (\texttt{\$\_MUX\_}):} 365
+    \item \textbf{Logic Gates:} 3,547 AND, 3,630 OR, 216 XOR, 220 NOT
+    \item \textbf{Unintended Latches:} 0
+\end{itemize}
+The absence of latches confirms that all combinational paths are fully specified.
+
+\section{Limitations and Future Improvements}
+The primary limitation of this single-cycle processor is the operating frequency penalty dictated by the long combinational critical path (Instruction Fetch through Data Memory Write-back). Future extensions will implement a classic 5-stage pipeline (IF, ID, EX, MEM, WB) with hazard detection and forwarding units, interrupt handling, and byte/halfword memory access instructions.
+
+\section{Individual Contributions}
+The project was executed by a team of five members with responsibilities distributed as follows:
+
+\begin{table}[h]
+\centering
+\caption{Group Member Contributions}
+\label{tab:contributions}
+\begin{tabular}{@{}lll@{}}
+\toprule
+Member & Assigned Role & Primary Contributions \\
+\midrule
+Member 1 & System Architect & Top-level integration (\texttt{mips\_core.v}, \texttt{mips\_system.v}), Makefile automation. \\
+Member 2 & Control Specialist & Main decoder (\texttt{mips\_decoder.v}) and ALU control logic, truth tables. \\
+Member 3 & Datapath Engineer & 32-bit ALU (\texttt{alu.v}), sign extension, writeback logic, Yosys synthesis. \\
+Member 4 & Memory Engineer & Register file (\texttt{register\_file.v}), instruction and data memory interfaces. \\
+Member 5 & Verification Lead & Python assembler (\texttt{assemble.py}), assembly benchmarks, testbenches. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Conclusion}
+A fully functional 32-bit single-cycle MIPS processor with modular memory interfaces was successfully designed, simulated, synthesized, and documented. The processor executes an 11-instruction subset with verified architectural compliance, robust fault handling, and exact single-cycle execution timing.
+
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+\end{document}

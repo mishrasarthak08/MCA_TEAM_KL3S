@@ -1,0 +1,57 @@
+[*]
+[*] GTKWave Analyzer Configuration File for Single-Cycle MIPS Processor
+[*]
+
+[dumpfile] "waveforms/mips_cpu_array_sum.vcd"
+[savefile] "waveforms/mips_cpu.gtkw"
+[timestart] 0
+[size] 1400 900
+[pos] -1 -1
+
+*-Clock and Control
+tb_mips_cpu.clk
+tb_mips_cpu.rst
+tb_mips_cpu.pc_en
+
+*-Program Counter & Instruction
+@22
+tb_mips_cpu.current_pc[31:0]
+tb_mips_cpu.current_instruction[31:0]
+
+*-Control Signals
+@28
+tb_mips_cpu.sys_inst.core_inst.reg_dst
+tb_mips_cpu.sys_inst.core_inst.alu_src
+tb_mips_cpu.sys_inst.core_inst.mem_to_reg
+tb_mips_cpu.sys_inst.core_inst.safe_reg_write
+tb_mips_cpu.sys_inst.core_inst.safe_mem_read
+tb_mips_cpu.sys_inst.core_inst.safe_mem_write
+tb_mips_cpu.branch_taken
+tb_mips_cpu.jump_taken
+@22
+tb_mips_cpu.sys_inst.core_inst.alu_ctrl[3:0]
+
+*-Register File
+@22
+tb_mips_cpu.sys_inst.core_inst.rs[4:0]
+tb_mips_cpu.sys_inst.core_inst.rt[4:0]
+tb_mips_cpu.sys_inst.core_inst.reg_read_data1[31:0]
+tb_mips_cpu.sys_inst.core_inst.reg_read_data2[31:0]
+tb_mips_cpu.write_reg[4:0]
+tb_mips_cpu.write_data[31:0]
+
+*-ALU
+@22
+tb_mips_cpu.sys_inst.core_inst.alu_operand_b[31:0]
+tb_mips_cpu.alu_result[31:0]
+@28
+tb_mips_cpu.sys_inst.core_inst.alu_zero
+
+*-Data Memory
+@22
+tb_mips_cpu.dmem_addr[31:0]
+tb_mips_cpu.dmem_write_data[31:0]
+tb_mips_cpu.dmem_read_data[31:0]
+@28
+tb_mips_cpu.dmem_write
+tb_mips_cpu.dmem_read
