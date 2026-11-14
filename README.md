@@ -3,12 +3,13 @@
 [![Verilog-2001](https://img.shields.io/badge/HDL-Verilog--2001-blue.svg)](http://www.verilog.com/)
 [![Simulation-Icarus](https://img.shields.io/badge/Simulation-Icarus_Verilog_13.0-brightgreen.svg)](https://steveicarus.github.io/iverilog/)
 [![Synthesis-Yosys](https://img.shields.io/badge/Synthesis-Yosys_0.71-orange.svg)](https://yosyshq.net/yosys/)
+[![Format-IEEEtran](https://img.shields.io/badge/Report-IEEEtran_Conference-purple.svg)](report/main.pdf)
 [![License-MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Verification-100%_Pass](https://img.shields.io/badge/Tests-85%2F85_Passed-success.svg)](reports/simulation_results.md)
 
 An intermediate-to-advanced Computer Architecture project implementing a functional, 32-bit Harvard-architecture Single-Cycle MIPS processor in synthesizable Verilog-2001. Designed for rigorous academic evaluation across three core deliverables:
-1. **IEEE Project Report** (10 Marks): Located in `report/main.pdf`.
-2. **Prototype Demonstration Video** (15 Marks): Scripted in `docs/video_script.md` (< 5 mins).
+1. **IEEE Project Report** (10 Marks): Located in [report/main.pdf](report/main.pdf) (compiled with official `IEEEtran` conference class).
+2. **Prototype Demonstration Video** (15 Marks): Scripted in [docs/video_script.md](docs/video_script.md) (4m30s duration, < 5 min limit).
 3. **GitHub Repository** (5 Marks): Complete reproducible codebase with automated Makefile tooling.
 
 ---
@@ -20,7 +21,7 @@ The processor fetches, decodes, executes, performs memory transactions, and comm
 ### Core Objectives
 - **Instruction Execution:** Full hardware execution of arithmetic, logic, immediate, memory load/store, conditional branching, and unconditional jumps.
 - **Modular Memory Architecture:** Physically segregated 32-bit Instruction Memory (ROM) and Data Memory (RAM) interfaces conforming to Harvard architecture.
-- **Architectural Integrity:** Physical invariance of register `$0` (`$zero` reads `0x00000000`, writes dropped), sign-extension of 16-bit immediates, and word-alignment checking.
+- **Architectural Integrity:** Physical invariance of register `$0` (`$zero` reads `0x00000000`, writes dropped), sign-extension of 16-bit immediates, and word-alignment checking (`addr[1:0] == 2'b00`).
 - **Hardware Robustness:** Automatic detection of illegal opcodes and invalid function codes, suppressing write strobes to prevent state corruption.
 - **Benchmark Demonstrations:** Execution of two complete programs from machine-code hex files:
   1. **Array Sum:** Accumulates `[3, 1, 4, 1, 5]` to yield **14** at Memory[20].
@@ -34,17 +35,17 @@ The processor implements 11 educational MIPS32 instructions with zero branch del
 
 | Instruction | Type | Format | Opcode / Funct | Operation |
 |---|:---:|---|:---:|---|
-| **ADD** | R | `ADD rd, rs, rt` | Op: `000000`, Funct: `100000` (`0x20`) | `R[rd] = R[rs] + R[rt]` |
-| **SUB** | R | `SUB rd, rs, rt` | Op: `000000`, Funct: `100010` (`0x22`) | `R[rd] = R[rs] - R[rt]` |
-| **AND** | R | `AND rd, rs, rt` | Op: `000000`, Funct: `100100` (`0x24`) | `R[rd] = R[rs] & R[rt]` |
-| **OR** | R | `OR rd, rs, rt` | Op: `000000`, Funct: `100101` (`0x25`) | `R[rd] = R[rs] \| R[rt]` |
-| **XOR** | R | `XOR rd, rs, rt` | Op: `000000`, Funct: `100110` (`0x26`) | `R[rd] = R[rs] ^ R[rt]` |
-| **SLT** | R | `SLT rd, rs, rt` | Op: `000000`, Funct: `101010` (`0x2A`) | `R[rd] = ($signed(R[rs]) < $signed(R[rt])) ? 1 : 0` |
-| **ADDI** | I | `ADDI rt, rs, imm` | Op: `001000` (`0x08`) | `R[rt] = R[rs] + SignExt(imm)` |
-| **LW** | I | `LW rt, offset(rs)` | Op: `100011` (`0x23`) | `R[rt] = Memory[R[rs] + SignExt(offset)]` |
-| **SW** | I | `SW rt, offset(rs)` | Op: `101011` (`0x2B`) | `Memory[R[rs] + SignExt(offset)] = R[rt]` |
-| **BEQ** | I | `BEQ rs, rt, label` | Op: `000100` (`0x04`) | `if (R[rs] == R[rt]) PC = PC + 4 + (SignExt(imm) << 2)` |
-| **J** | J | `J target` | Op: `000010` (`0x02`) | `PC = { (PC + 4)[31:28], target[25:0], 2'b00 }` |
+| **ADD** | R | `ADD rd, rs, rt` | Op: `000000`, Funct: `100000` (`0x20`) | $R[rd] = R[rs] + R[rt]$ |
+| **SUB** | R | `SUB rd, rs, rt` | Op: `000000`, Funct: `100010` (`0x22`) | $R[rd] = R[rs] - R[rt]$ |
+| **AND** | R | `AND rd, rs, rt` | Op: `000000`, Funct: `100100` (`0x24`) | $R[rd] = R[rs] \ \& \ R[rt]$ |
+| **OR** | R | `OR rd, rs, rt` | Op: `000000`, Funct: `100101` (`0x25`) | $R[rd] = R[rs] \ \| \ R[rt]$ |
+| **XOR** | R | `XOR rd, rs, rt` | Op: `000000`, Funct: `100110` (`0x26`) | $R[rd] = R[rs] \ \oplus \ R[rt]$ |
+| **SLT** | R | `SLT rd, rs, rt` | Op: `000000`, Funct: `101010` (`0x2A`) | $R[rd] = (\$signed(R[rs]) < \$signed(R[rt])) \ ? \ 1 : 0$ |
+| **ADDI** | I | `ADDI rt, rs, imm` | Op: `001000` (`0x08`) | $R[rt] = R[rs] + \text{SignExt}(imm)$ |
+| **LW** | I | `LW rt, offset(rs)` | Op: `100011` (`0x23`) | $R[rt] = \text{Memory}[R[rs] + \text{SignExt}(offset)]$ |
+| **SW** | I | `SW rt, offset(rs)` | Op: `101011` (`0x2B`) | $\text{Memory}[R[rs] + \text{SignExt}(offset)] = R[rt]$ |
+| **BEQ** | I | `BEQ rs, rt, label` | Op: `000100` (`0x04`) | $\text{if } R[rs] == R[rt]: \ PC = PC + 4 + (\text{SignExt}(imm) \ll 2)$ |
+| **J** | J | `J target` | Op: `000010` (`0x02`) | $PC = \{ (PC + 4)[31:28], target[25:0], 2'b00 \}$ |
 
 ---
 
@@ -78,7 +79,7 @@ The processor implements 11 educational MIPS32 instructions with zero branch del
                                      +------------------- Next PC ---------------+
 ```
 
-A complete interactive Mermaid diagram is provided in `docs/block_diagram.mmd` and `docs/datapath_diagram.mmd`.
+Interactive Mermaid diagrams are available in [docs/block_diagram.mmd](docs/block_diagram.mmd) and [docs/datapath_diagram.mmd](docs/datapath_diagram.mmd).
 
 ---
 
@@ -138,9 +139,9 @@ MCA_TEAM_KL3S/
 │   ├── evaluation_checklist.md         # Academic Grading Rubric Compliance Matrix
 │   └── team_contributions.md           # Individual Group Member Contribution Table
 │
-├── report/                             # Academic Project Report (IEEE Format)
-│   ├── main.tex                        # LaTeX Source Code
-│   ├── references.bib                  # BibTeX References
+├── report/                             # Academic Project Report (Official IEEEtran Class)
+│   ├── main.tex                        # LaTeX Source Code (\documentclass[conference]{IEEEtran})
+│   ├── references.bib                  # BibTeX References (Authentic academic citations)
 │   ├── figures/                        # Diagram Assets
 │   └── main.pdf                        # Compiled Two-Column IEEE Project Report PDF
 │
@@ -180,7 +181,7 @@ sudo apt-get install iverilog yosys python3
 
 ## 6. Execution Commands & Quickstart
 
-All operations are automated via the root `Makefile`:
+All operations are automated via the root [Makefile](Makefile):
 
 ```bash
 # 1. Assemble programs, run full test regression, run both demos, and run synthesis
@@ -198,7 +199,7 @@ make demo-sum
 # 5. Run Program 2 (Maximum Search = 11) with live execution trace
 make demo-max
 
-# 6. Run Yosys RTL Synthesis
+# 6. Run Yosys RTL Synthesis on mips_core
 make synth
 
 # 7. Compile IEEE Project Report PDF
@@ -228,14 +229,15 @@ make clean
 
 ## 8. Logic Synthesis Results (Yosys 0.71)
 
-Synthesizing `mips_core.v` using Yosys yielded:
+Synthesizing `mips_core.v` using Yosys targeting generic cell primitives produced:
+- **Top-Level Module Synthesized:** `mips_core` (memories external via Harvard buses)
 - **Total Netlist Cells:** **9,002**
 - **State Flip-Flops (`$_DFFE_PP0P_`):** **1,024** (992 in Register File + 32 in PC)
 - **Multiplexers (`$_MUX_`):** **365**
 - **Logic Gates:** 3,547 AND, 3,630 OR, 216 XOR, 220 NOT
 - **Unintended Latches:** **0** (pure combinational decoding confirmed)
 
-See `reports/synthesis_report.md` for full breakdown.
+*Hardware Feasibility Note:* No physical FPGA board was programmed or deployed. Detailed cell breakdowns and unverified theoretical FPGA projections are documented in [reports/synthesis_report.md](reports/synthesis_report.md).
 
 ---
 
@@ -251,7 +253,7 @@ gtkwave waveforms/mips_cpu_array_sum.vcd waveforms/mips_cpu.gtkw
 gtkwave waveforms/mips_cpu_max_search.vcd waveforms/mips_cpu.gtkw
 ```
 
-Detailed signal walkthroughs and timing milestones are documented in `waveforms/README.md`.
+Detailed signal walkthroughs and timing milestones are documented in [waveforms/README.md](waveforms/README.md).
 
 ---
 
@@ -275,7 +277,7 @@ This processor implements an unpipelined educational subset of MIPS32:
 | **Member 5** | Verification & Software Lead (`assemble.py`, `array_sum.asm`, `max_search.asm`, Testbenches) | `[NAME_5]` / `[ID_5]` |
 
 ### Deliverable Artifacts
-- **IEEE Project Report:** `report/main.pdf` (source: `report/main.tex`).
-- **Demonstration Video Script:** `docs/video_script.md` (Duration: 4m30s, max 5m).
-- **Demonstration Video Link:** `https://youtu.be/[REPLACE_WITH_YOUR_UNLISTED_DEMO_VIDEO_ID]`
-- **Evaluation Checklist:** `docs/evaluation_checklist.md`.
+- **IEEE Project Report:** [report/main.pdf](report/main.pdf) (official `IEEEtran` conference class; LaTeX source: [report/main.tex](report/main.tex)).
+- **Demonstration Video Script:** [docs/video_script.md](docs/video_script.md) (Duration: 4m30s, max 5m).
+- **Demonstration Video Link:** `https://youtu.be/[REPLACE_WITH_YOUR_UNLISTED_DEMO_VIDEO_ID]` (Pending team upload).
+- **Evaluation Checklist:** [docs/evaluation_checklist.md](docs/evaluation_checklist.md).

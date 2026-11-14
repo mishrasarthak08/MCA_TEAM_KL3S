@@ -1,130 +1,131 @@
-# Prototype Demonstration Video Script & Storyboard
+# Prototype Demonstration Video Script & Recording Storyboard
 
-**Project Title:** Single-Cycle MIPS Processor with Memory Interface  
-**Target Video Duration:** 4 Minutes 30 Seconds (Strict Limit: < 5 Minutes)  
-**Deliverable Document:** `docs/video_script.md`  
-**Video Link Placeholder:** `https://youtu.be/[REPLACE_WITH_YOUR_UNLISTED_DEMO_VIDEO_ID]`
-
----
-
-## Recording Guidelines for the Team
-
-1. **Resolution & Audio:** Record screen at 1080p (1920x1080) at 30 fps or 60 fps. Use a clean microphone with noise suppression.
-2. **Terminal Setup:** Use a high-contrast terminal with enlarged font (e.g. 16pt bold).
-3. **Presenter Transitions:** Either have one lead presenter introduce the team members or have all 5 members record their respective sections according to the speaker tags below.
-4. **Timing Discipline:** Keep each section strictly within the designated time window so the total duration remains approximately 4:30.
+**Project Title:** Single-Cycle MIPS Processor with Memory Interface
+**Target Duration:** 4 Minutes 30 Seconds (Academic Hard Limit: $\le$ 5 Minutes 00 Seconds)
+**Deliverable File:** `docs/video_script.md`
+**Video URL Placeholder:** `https://youtu.be/[REPLACE_WITH_YOUR_UNLISTED_DEMO_VIDEO_ID]`
 
 ---
 
-## Detailed Video Storyboard & Script
+## 1. Technical Recording Guidelines
+
+1. **Resolution & Audio:** Record screen at 1080p (1920x1080) at 30 fps or 60 fps. Use a headset or cardioid microphone with noise suppression enabled.
+2. **Terminal Appearance:** Use a dark, high-contrast terminal theme with font size enlarged to 16pt or 18pt bold for clear legibility on video.
+3. **Presenter Options:** Either have one primary presenter narrate the script (introducing each group member), or have each of the five members speak during their designated segments.
+4. **Pacing:** Maintain a steady, conversational delivery rate of approximately 130–140 words per minute to remain strictly within the 4:30 target.
 
 ---
 
-### [0:00 - 0:25] Section 1: Project Introduction & Objectives (Duration: 25s)
+## 2. Timed Storyboard & Spoken Script
+
+---
+
+### [0:00 - 0:25] Segment 1: Project Overview & Objectives (25s)
 - **Speaker:** Member 1 (Lead Presenter)
-- **Screen Display:** Project Title Slide: *Single-Cycle MIPS Processor with Memory Interface*, Academic Institution, Course Name, Team Roster.
+- **Visual Cue (On Screen):** Title slide in slide presentation or browser showing project title: *Single-Cycle MIPS Processor with Memory Interface*, Course Title, Academic Term, and Team Roster.
 - **Spoken Audio:**
-  > "Hello everyone, and welcome to our final project presentation. Today, we present the design, Verilog implementation, synthesis, and verification of a genuinely functional 32-bit Single-Cycle MIPS Processor with a dedicated memory interface. Our core objective is to execute an educational subset of the MIPS32 ISA—including arithmetic, logic, immediate, memory load and store, branch, and jump operations—with single-cycle execution, modular Harvard memory separation, and complete self-checking verification."
+  > "Hello everyone, and welcome to our project demonstration. Today, we present the design, Verilog-2001 implementation, synthesis, and verification of a genuinely functional 32-bit Single-Cycle MIPS processor with modular memory interfaces. Our objective is to execute an educational subset of MIPS32 instructions—including arithmetic, logical, memory load and store, conditional branch, and jump operations—with deterministic single-cycle execution, segregated Harvard memory buses, and automated self-checking verification."
 
 ---
 
-### [0:25 - 0:50] Section 2: Introduction of Team Members (Duration: 25s)
-- **Speaker:** Member 1 (introducing all members, or each member speaking 5s)
-- **Screen Display:** Slide showing photos/names/student IDs and engineering roles of all 5 team members.
+### [0:25 - 0:50] Segment 2: Introduction of the Five Team Members (25s)
+- **Speaker:** Member 1
+- **Visual Cue (On Screen):** Team slide displaying the names, student IDs, and assigned engineering specializations of all five members.
 - **Spoken Audio:**
-  > "Our engineering team consists of five members:  
-  > - **[MEMBER 1 NAME]**, serving as System Architect and Top-Level Integration Lead.  
-  > - **[MEMBER 2 NAME]**, our Control Unit and Instruction Decoder Specialist.  
-  > - **[MEMBER 3 NAME]**, responsible for the Datapath, ALU, and Yosys Synthesis.  
-  > - **[MEMBER 4 NAME]**, who implemented the Register File and Memory subsystems.  
-  > - **[MEMBER 5 NAME]**, who built our Python Assembler and led CPU Verification."
+  > "Our project was developed collaboratively by five team members:
+  > - **[MEMBER 1 FULL NAME]** (ID: [STUDENT_ID_1]), serving as System Architect and Top-Level Integration Lead.
+  > - **[MEMBER 2 FULL NAME]** (ID: [STUDENT_ID_2]), our Control Unit and Instruction Decoder Specialist.
+  > - **[MEMBER 3 FULL NAME]** (ID: [STUDENT_ID_3]), responsible for the Datapath, ALU, and RTL Synthesis.
+  > - **[MEMBER 4 FULL NAME]** (ID: [STUDENT_ID_4]), who developed the Register File and Memory subsystems.
+  > - **[MEMBER 5 FULL NAME]** (ID: [STUDENT_ID_5]), who built our Python Assembler and led Verification."
 
 ---
 
-### [0:50 - 1:20] Section 3: Architecture & Supported ISA (Duration: 30s)
+### [0:50 - 1:15] Segment 3: Architecture & Supported Instruction Set (25s)
 - **Speaker:** Member 2
-- **Screen Display:** Architecture Overview slide showing the supported instructions table (R-Type: ADD, SUB, AND, OR, XOR, SLT; I-Type: ADDI, LW, SW, BEQ; J-Type: J).
+- **Visual Cue (On Screen):** Slide displaying the Supported Instruction Set summary table (R-Type: ADD, SUB, AND, OR, XOR, SLT; I-Type: ADDI, LW, SW, BEQ; J-Type: J).
 - **Spoken Audio:**
-  > "Our processor implements a 32-bit Harvard architecture. We support 11 fundamental MIPS instructions. In R-type: ADD, SUB, AND, OR, XOR, and signed SLT. In I-type: ADDI for immediate arithmetic, Load Word and Store Word for data memory access, and Branch on Equal for conditional control flow. Finally, the J-type instruction provides unconditional jumps. Crucially, each instruction completes in exactly one clock cycle with a CPI of 1.0, and our implementation avoids complex branch delay slots for clean educational semantics."
+  > "Our processor microarchitecture implements an 11-instruction educational subset of MIPS32. In R-type, we support addition, subtraction, bitwise AND, OR, XOR, and signed set-on-less-than. In I-type, we provide ADDI for immediate arithmetic, Load Word and Store Word for 32-bit aligned data memory access, and Branch on Equal for conditional control flow. For unconditional branching, we implement the J-type Jump instruction. In our educational model, branch delay slots are omitted so control updates take effect immediately on the next clock cycle."
 
 ---
 
-### [1:20 - 1:55] Section 4: Block Diagram & Datapath Flow (Duration: 35s)
+### [1:15 - 1:45] Segment 4: Datapath & Block Diagram Walkthrough (30s)
 - **Speaker:** Member 3
-- **Screen Display:** Displaying `docs/block_diagram.mmd` or rendered diagram showing the complete closed loop: PC $\to$ Instruction Memory $\to$ Decoder $\to$ Register File $\to$ ALU $\to$ Data Memory $\to$ Write-Back Multiplexer.
+- **Visual Cue (On Screen):** Full-screen display of the processor block diagram (`docs/block_diagram.mmd` or graphic diagram). Presenter highlights the path: PC $\to$ Instruction Memory $\to$ Decoder $\to$ Register File $\to$ ALU $\to$ Data Memory $\to$ Write-Back Multiplexers.
 - **Spoken Audio:**
-  > "Here is our complete processor block diagram. During each cycle, the Program Counter outputs the instruction address to a 256-word Instruction ROM. The instruction fields are immediately dispatched: opcode to the Main Decoder, register indices $rs$ and $rt$ to the asynchronous read ports of our 32-entry Register File, and immediate fields to the Sign Extension unit. The ALU computes arithmetic results or memory addresses, while the Branch and Jump logic evaluates branch conditions and computes the next PC in parallel. For loads, data is retrieved from Data Memory, and the Write-Back logic routes the final result back to the register file before the next clock edge."
+  > "Here is our complete processor block diagram. On each rising clock edge, the Program Counter supplies the byte address to a 256-word Instruction ROM. Instruction bits are decoded in parallel: opcodes go to the Main Decoder, register indices to the dual asynchronous read ports of our 32-entry Register File, and immediate fields to the Sign Extension unit. The ALU computes results or data memory addresses, while the Branch and Jump logic evaluates next-PC targets. For load instructions, data is read from Data Memory, and the write-back multiplexer selects the final word to commit into the register file."
 
 ---
 
-### [1:55 - 2:30] Section 5: Verilog RTL Architecture & Code Walkthrough (Duration: 35s)
+### [1:45 - 2:15] Segment 5: Verilog RTL Implementation Walkthrough (30s)
 - **Speaker:** Member 4
-- **Screen Display:** Split screen or code editor showing `rtl/mips_core.v`, `rtl/mips_decoder.v`, and `rtl/register_file.v`.
+- **Visual Cue (On Screen):** Code editor (VS Code) displaying `rtl/mips_core.v`, `rtl/mips_decoder.v`, and `rtl/register_file.v`.
 - **Spoken Audio:**
-  > "Our Verilog-2001 codebase is strictly modular. In `mips_decoder.v`, all control outputs feature safe combinational defaults to eliminate unintended latches and protect architectural state against invalid opcodes. In `register_file.v`, register zero ($0) is physically hardwired to zero, and write attempts targeting $0$ are safely suppressed. Both instruction and data memories feature address alignment checks and bounds protection. In `mips_core.v`, all eleven modules are cleanly wired with separate instruction and data memory buses, making the core portable to external memory controllers."
+  > "Our Verilog-2001 codebase is strictly modular, partitioned into 12 synthesizable files. In `mips_decoder.v`, all control outputs have safe combinational defaults to eliminate latches and suppress writes on illegal opcodes. In `register_file.v`, register zero ($0) is physically hardwired to zero, and write attempts targeting $0$ are dropped. Both instruction and data memories include word-alignment checking and bounds protection. In `mips_core.v`, all modules are connected using clean buses, making the core portable to external memory systems."
 
 ---
 
-### [2:30 - 3:05] Section 6: Automated Assembly & Simulation Workflow (Duration: 35s)
+### [2:15 - 2:45] Segment 6: Toolchain & Automated Regression Demo (30s)
 - **Speaker:** Member 5
-- **Screen Display:** Live terminal terminal window running `make assemble` followed by `make test`.
-- **Action / Command:**
+- **Visual Cue (On Screen):** Clean terminal window. Presenter runs `make assemble` followed by `make test`.
+- **Terminal Commands Demonstrated:**
   ```bash
   make assemble
   make test
   ```
 - **Spoken Audio:**
-  > "To verify our processor, we developed a two-pass Python assembler in `tools/assemble.py` that translates symbolic MIPS assembly with labels into machine-code hex files. By typing `make assemble`, our sample programs are compiled automatically. Then, typing `make test` executes our full regression suite across the ALU, Register File, Decoder, Memory interfaces, Branch-Jump logic, and CPU robustness. Notice that all 85 unit and integration assertions pass with zero failures."
+  > "To verify our processor, we created a custom two-pass Python assembler in `tools/assemble.py` that translates symbolic MIPS assembly programs with labels into machine-code hex files. By running `make assemble`, our programs are compiled automatically. Then, typing `make test` executes our full verification suite across the ALU, Register File, Decoder, Memory, Branch/Jump logic, and CPU robustness. All 85 self-checking assertions pass with zero failures."
 
 ---
 
-### [3:05 - 3:35] Section 7: Program 1 Demo: Array Sum (Duration: 30s)
+### [2:45 - 3:15] Segment 7: Program 1 Demo: Array Sum (30s)
 - **Speaker:** Member 5
-- **Screen Display:** Terminal executing `make demo-sum`. Show output trace and final PASS assertion.
-- **Action / Command:**
+- **Visual Cue (On Screen):** Terminal window executing `make demo-sum`. Show the cycle-by-cycle trace table on screen, pausing briefly on cycle 36 and the final PASS confirmation.
+- **Terminal Command Demonstrated:**
   ```bash
   make demo-sum
   ```
 - **Spoken Audio:**
-  > "Now let us demonstrate our first real benchmark: Array Sum. The data memory is initialized with the array [3, 1, 4, 1, 5]. The CPU executes a loop that traverses the array using LW, accumulates the sum in register $s0 using ADD, increments the pointer and counter, and branches with BEQ when complete. Finally, SW writes the accumulated sum into memory word 5. As seen in the console output, the simulation completes in exactly 39 clock cycles, verifying that memory address 20 holds 14, perfectly matching the theoretical sum."
+  > "Now let us demonstrate our first real benchmark: Array Sum. Data memory is pre-loaded with the array [3, 1, 4, 1, 5]. The CPU executes an iterative loop that loads each element using LW, accumulates the sum in register $s0 using ADD, advances the pointer and counter, and branches with BEQ when five elements are read. At cycle 36, SW stores the accumulated sum into memory byte address 20. The testbench confirms that memory location 20 holds 14 (0x0E), completing in 39 clock cycles with a CPI of 1.0."
 
 ---
 
-### [3:35 - 4:05] Section 8: Program 2 Demo: Maximum Element Search (Duration: 30s)
+### [3:15 - 3:45] Segment 8: Program 2 Demo: Maximum Search (30s)
 - **Speaker:** Member 3
-- **Screen Display:** Terminal executing `make demo-max`. Show output trace and final PASS assertion.
-- **Action / Command:**
+- **Visual Cue (On Screen):** Terminal window executing `make demo-max`. Show the cycle trace highlighting cycle 16 where the candidate updates, cycle 36 where it writes back, and the final PASS confirmation.
+- **Terminal Command Demonstrated:**
   ```bash
   make demo-max
   ```
 - **Spoken Audio:**
-  > "Next, we demonstrate Program 2: Maximum Element Search. We initialize data memory with [7, 2, 11, 4, 9]. The processor loads the first element as the initial candidate, loops through the remaining elements using signed SLT comparisons, and uses conditional branches to update the maximum in register $s0. At cycle 16, when 11 is encountered, the candidate updates, while subsequent smaller values like 4 and 9 are bypassed. At cycle 36, the maximum is stored to memory word 5. The self-checking testbench confirms that memory location 20 contains 11, completing in 39 cycles."
+  > "Next, we run Program 2: Maximum Element Search. Data memory is initialized with [7, 2, 11, 4, 9]. The processor loads the first element as the initial candidate, then iterates through remaining elements using signed SLT comparisons and conditional branches. At cycle 16, when 11 is encountered, the maximum candidate updates to 11, while smaller elements like 4 and 9 are bypassed. At cycle 36, SW writes 11 into memory byte address 20. The self-checking testbench confirms memory location 20 contains 11, verified in 39 cycles."
 
 ---
 
-### [4:05 - 4:25] Section 9: Waveform & Synthesis Results (Duration: 20s)
+### [3:45 - 4:10] Segment 9: Waveform Analysis & Synthesis Overview (25s)
 - **Speaker:** Member 1
-- **Screen Display:** Show GTKWave displaying `mips_cpu_array_sum.vcd` with signal groups (`current_pc`, `instruction`, `alu_result`, `dmem_write`), followed by a brief view of `reports/synthesis_report.md`.
+- **Visual Cue (On Screen):** Switch to GTKWave displaying `waveforms/mips_cpu_array_sum.vcd` with grouped signals (`clk`, `current_pc`, `instruction`, `alu_result`, `dmem_write`), then show the summary table in `reports/synthesis_report.md`.
 - **Spoken Audio:**
-  > "Inspecting our GTKWave waveforms, we observe clean, single-cycle transitions without hazards. In Yosys synthesis, our `mips_core` synthesized into 9,002 generic cells, including 1,024 flip-flops and zero latches, confirming complete hardware synthesizability for FPGA deployment."
+  > "In GTKWave, we inspect the execution waveforms, observing clean single-cycle transitions without race conditions. In Yosys synthesis, our `mips_core` synthesized into 9,002 generic logic cells, including 1,024 flip-flops and zero latches, confirming clean hardware synthesizability with technology-independent primitives."
 
 ---
 
-### [4:25 - 4:30] Section 10: Conclusion (Duration: 5s)
+### [4:10 - 4:30] Segment 10: Conclusion & Repository Links (20s)
 - **Speaker:** Member 1
-- **Screen Display:** Concluding slide showing GitHub Repository URL and IEEE Report link.
+- **Visual Cue (On Screen):** Web browser displaying the GitHub repository page (`https://github.com/mishrasarthak08/MCA_TEAM_KL3S`) showing the compiled IEEE report PDF and documentation.
 - **Spoken Audio:**
-  > "Thank you for your time. All RTL source code, testbenches, assemblers, synthesis reports, and the IEEE project report are fully accessible in our GitHub repository."
+  > "In conclusion, we have designed, simulated, synthesized, and verified a 32-bit Single-Cycle MIPS processor that satisfies all academic requirements. All Verilog RTL source files, testbenches, assemblers, synthesis reports, and the compiled IEEE project report PDF are available in our public GitHub repository. Thank you for watching!"
 
 ---
 
-## Pre-Recording Checklist
+## 3. Pre-Recording Verification Checklist
 
-- [ ] All 5 members confirmed their names and assigned speaking segments.
-- [ ] Terminal environment verified: `iverilog`, `vvp`, `python3`, `yosys` functional.
-- [ ] Screen recorder tested with audio levels balanced.
-- [ ] Command `make test`, `make demo-sum`, and `make demo-max` tested from clean state.
-- [ ] GTKWave layout saved and verified (`waveforms/mips_cpu.gtkw`).
-- [ ] Timer running during rehearsal to guarantee total duration $\le$ 4 minutes 30 seconds.
-- [ ] Video uploaded to YouTube / Google Drive with view permissions set to "Unlisted" or "Public".
-- [ ] Link added to `README.md`, `docs/video_script.md`, and `report/main.tex`.
+- [ ] All five team members confirmed their assigned speaking roles and names.
+- [ ] Terminal environment tested: `iverilog`, `vvp`, `python3`, `yosys`, and `make` available.
+- [ ] Terminal font size enlarged to 16pt+ bold for clear readability on video.
+- [ ] Screen recording software tested with clean audio balance and no background noise.
+- [ ] Commands `make test`, `make demo-sum`, and `make demo-max` tested from a clean state.
+- [ ] GTKWave layout verified with pre-saved `waveforms/mips_cpu.gtkw` profile.
+- [ ] Timer running during rehearsal to verify total video duration is between 4m15s and 4m45s (< 5m00s).
+- [ ] Video uploaded to YouTube / Google Drive with visibility set to "Public" or "Unlisted".
+- [ ] Video URL added to `README.md`, `docs/video_script.md`, and `report/main.tex`.
