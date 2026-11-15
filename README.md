@@ -172,3 +172,5 @@ Individual contributions are intentionally blank for the team to complete. The i
 - Upload the video and replace the pending link in the README and video script.
 - Run `make all` from a clean checkout and confirm `95 / 95` checks pass.
 - Submit the repository URL and confirm `report/main.pdf` opens correctly.
+
+*Minor edit by Lakshay*
