@@ -147,7 +147,7 @@ Detailed traces are recorded in [reports/simulation_results.md](reports/simulati
 - Editable report source: [report/main.tex](report/main.tex)
 - Research source register: [docs/research_sources.md](docs/research_sources.md)
 - Prototype video script: [docs/video_script.md](docs/video_script.md)
-- Video link: **pending team recording and upload**
+- [MCA Video](https://drive.google.com/file/d/1l72H7QX6IGL4G0Z049l_twJ7Oo-0vFlS/view?usp=sharing)
 - Rubric checklist: [docs/evaluation_checklist.md](docs/evaluation_checklist.md)
 - Contribution template: [docs/team_contributions.md](docs/team_contributions.md)
 
