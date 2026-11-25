@@ -118,8 +118,12 @@ waves:
 figures:
 	@echo "==> Generating report figures..."
 	@mkdir -p report/figures
-	dot -Tpng -Gdpi=300 report/figures/harvard_architecture.dot -o report/figures/harvard_architecture.png
-	dot -Tpng -Gdpi=300 report/figures/memory_service_comparison.dot -o report/figures/memory_service_comparison.png
+	@if command -v dot >/dev/null 2>&1; then \
+		dot -Tpng -Gdpi=300 report/figures/harvard_architecture.dot -o report/figures/harvard_architecture.png && \
+		dot -Tpng -Gdpi=300 report/figures/memory_service_comparison.dot -o report/figures/memory_service_comparison.png; \
+	else \
+		echo "Graphviz (dot) not installed. Using existing PNG figures in report/figures/."; \
+	fi
 
 report: figures
 	@echo "==> Compiling IEEE Project Report with Tectonic..."
