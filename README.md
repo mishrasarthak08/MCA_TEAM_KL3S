@@ -146,31 +146,24 @@ Detailed traces are recorded in [reports/simulation_results.md](reports/simulati
 - IEEE report: [report/main.pdf](report/main.pdf)
 - Editable report source: [report/main.tex](report/main.tex)
 - Research source register: [docs/research_sources.md](docs/research_sources.md)
-- Prototype video script: [docs/video_script.md](docs/video_script.md)
-- [MCA Video](https://drive.google.com/file/d/1l72H7QX6IGL4G0Z049l_twJ7Oo-0vFlS/view?usp=sharing)
+- Prototype demonstration video: [mca video.mp4](mca%20video.mp4) (Streaming mirror: [Google Drive](https://drive.google.com/file/d/1l72H7QX6IGL4G0Z049l_twJ7Oo-0vFlS/view?usp=sharing))
 - Rubric checklist: [docs/evaluation_checklist.md](docs/evaluation_checklist.md)
-- Contribution template: [docs/team_contributions.md](docs/team_contributions.md)
+- Team contribution matrix: [docs/team_contributions.md](docs/team_contributions.md)
 
-## Team
+## Team KL3S
 
 | Member | Enrolment Number | Email | Individual Contribution |
 |---|---|---|---|
-| Sarthak Mishra | `2401010421` | `sarthak.mishra2024@nst.rishihood.edu.in` | |
-| Shitanshu Tiwari | `2401010440` | `shitanshu.tiwari2024@nst.rishihood.edu.in` | |
-| Shane Joseph | `2401020062` | `Shane.2024@nst.rishihood.edu.in` | |
-| Lakshay Yadav | `2401010250` | `Lakshay.yadav2024@nst.rishihood.edu.in` | |
-| Kshitiz Surana | `2401010242` | `kshitiz.2024@nst.rishihood.edu.in` | |
+| Sarthak Mishra | `2401010421` | `sarthak.mishra2024@nst.rishihood.edu.in` | Lead System Architect, top-level core & SoC integration (`mips_core.v`, `mips_system.v`), two-pass Python assembler (`tools/assemble.py`), benchmark programs (`array_sum.asm`, `max_search.asm`), Makefile automation. |
+| Shitanshu Tiwari | `2401010440` | `shitanshu.tiwari2024@nst.rishihood.edu.in` | Control Unit Specialist; designed main instruction decoder (`mips_decoder.v`) and ALU control logic (`alu_control.v`), truth tables, default combinational assignments, decoder testbench (`tb_decoder.v`). |
+| Shane Joseph | `2401020062` | `Shane.2024@nst.rishihood.edu.in` | Memory Hierarchy & Verification Lead; designed shared-memory arbiter (`shared_memory_arbiter.v`), memory hierarchy testbench (`tb_memory_hierarchy.v`), regression orchestration (95/95 checks), Phase I IEEE report update. |
+| Lakshay Yadav | `2401010250` | `Lakshay.yadav2024@nst.rishihood.edu.in` | Memory Subsystems & Branch/Jump Logic; implemented 32x32-bit register file with \$0 protection (`register_file.v`), Harvard memories with alignment/bounds safety (`instruction_memory.v`, `data_memory.v`), branch/jump logic. |
+| Kshitiz Surana | `2401010242` | `kshitiz.2024@nst.rishihood.edu.in` | Datapath Execution & Synthesis Specialist, Video Lead; implemented 32-bit ALU (`alu.v`), sign extension, writeback logic, ALU testbench (`tb_alu.v`), Yosys generic cell synthesis, recorded demonstration video. |
 
-Individual contributions are intentionally blank for the team to complete. The instructor will review Git history, so every member should make meaningful commits from their own GitHub account before submission. Do not fabricate or rewrite contribution history.
+## Evaluator Quickstart & Verification
 
-## Before Submission
-
-- Complete the contribution table in the report and `docs/team_contributions.md`.
-- Ensure all five members have meaningful, attributable Git commits.
-- Record a video shorter than five minutes and introduce all five members by name.
-- Show the project idea, block diagram, RTL, `make test-hierarchy`, a full program demo, and waveform evidence.
-- Upload the video and replace the pending link in the README and video script.
-- Run `make all` from a clean checkout and confirm `95 / 95` checks pass.
-- Submit the repository URL and confirm `report/main.pdf` opens correctly.
-
-*Minor edit by Lakshay*
+From a clean repository checkout, run:
+```bash
+make all
+```
+This single command assembles the benchmark programs, executes the complete 95-check self-checking regression suite, runs generic logic synthesis with Yosys, and compiles the IEEE project report PDF.

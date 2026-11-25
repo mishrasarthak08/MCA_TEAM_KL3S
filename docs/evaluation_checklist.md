@@ -13,7 +13,7 @@ Deadline: **November 16, 2026 at 11:59 PM IST**
 | Block diagram | `report/figures/harvard_architecture.png` | Ready |
 | Simulation evidence | `reports/simulation_results.md`, `waveforms/*.vcd` | Ready |
 | Shared-memory comparison | `rtl/shared_memory_arbiter.v`, `tb_memory_hierarchy.v` | Ready |
-| Individual contributions | report table and `docs/team_contributions.md` | **Team action** |
+| Individual contributions | report table and `docs/team_contributions.md` | Ready |
 | References | five verifiable sources with URLs | Ready |
 | PDF render review | three Letter-size pages, visually inspected | Ready |
 
@@ -21,11 +21,11 @@ Deadline: **November 16, 2026 at 11:59 PM IST**
 
 | Requirement | Evidence | Status |
 |---|---|:---:|
-| Duration below five minutes | `docs/video_script.md` targets 4:30 | Script ready |
-| Project idea stated | opening segment | Script ready |
-| All five names introduced | team introduction segment | Script ready |
-| Working prototype demonstrated | regression, comparison, demos, waveforms | Script ready |
-| Uploaded video link | README and script | **Team action** |
+| Duration below five minutes | `mca video.mp4` (4:30 duration, < 5:00 limit) | Ready |
+| Project idea stated | opening segment | Ready |
+| All five names introduced | team introduction segment | Ready |
+| Working prototype demonstrated | regression, comparison, demos, waveforms | Ready |
+| Uploaded video link | `mca video.mp4` in repo and Google Drive mirror | Ready |
 
 ## GitHub Repository
 
@@ -35,7 +35,7 @@ Deadline: **November 16, 2026 at 11:59 PM IST**
 | Prototype files included | `rtl/`, `testbench/`, `programs/`, `tools/` | Ready |
 | Relevant artifacts included | `docs/`, `reports/`, `waveforms/` | Ready |
 | Reproducible verification | `make all` | Ready |
-| All five members contribute meaningfully | Git history | **Critical team action** |
+| All five members contribute meaningfully | Git history (multi-member commits on `main`) | Ready |
 
 ## Reproduced Technical Evidence
 
@@ -46,10 +46,9 @@ Deadline: **November 16, 2026 at 11:59 PM IST**
 - Yosys 0.71: 9,002 generic cells, 1,024 flip-flops, and zero inferred latches for `mips_core`.
 - Tectonic 0.17: IEEE PDF compiled successfully.
 
-## Remaining Actions
+## Verification Checklist Before Presentation
 
-1. Fill the individual-contribution entries with accurate, interview-ready descriptions.
-2. Have every member make meaningful commits from their own account. The repository currently needs multi-member history before it satisfies that part of the rubric.
-3. Record and upload the prototype video, then replace the pending link.
-4. Run `make all` from a clean checkout and review the generated PDF and VCD files.
-5. Submit the repository URL through the instructor's Google Form.
+1. Confirm `make all` succeeds from clean state (`95 / 95` checks passed).
+2. Open `report/main.pdf` to verify rendering of text and figures.
+3. Confirm `mca video.mp4` plays cleanly with audio.
+4. Have terminal open with `make test`, `make test-hierarchy`, `make demo-sum`, and `make demo-max` ready to demonstrate live.
